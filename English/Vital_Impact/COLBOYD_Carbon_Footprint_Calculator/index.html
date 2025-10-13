@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Calculadora de huella de carbono COLBOYD</title>
+  <title>COLBOYD Carbon Footprint Calculator</title>
   <link rel="icon" href="https://calculadorahuellacarbono.github.io/favicon_vi.png" type="image/png">
   <style>
     body {
@@ -285,11 +285,15 @@
       return false;
     }
 
-    document.querySelectorAll(".acordeon").forEach((acordeon) => {
-      const titulo = acordeon.querySelector(".acordeon-titulo");
-      titulo.addEventListener("click", () => {
-        document.querySelectorAll(".acordeon").forEach((otro) => { if (otro !== acordeon) otro.classList.remove("activo"); });
-        acordeon.classList.toggle("activo");
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".acordeon").forEach((acordeon) => {
+        const titulo = acordeon.querySelector(".acordeon-titulo");
+        titulo.addEventListener("click", () => {
+          document.querySelectorAll(".acordeon").forEach((otro) => {
+            if (otro !== acordeon) otro.classList.remove("activo");
+          });
+          acordeon.classList.toggle("activo");
+        });
       });
     });
   </script>
