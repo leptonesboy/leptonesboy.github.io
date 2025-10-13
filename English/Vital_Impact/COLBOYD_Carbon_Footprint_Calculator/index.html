@@ -232,7 +232,7 @@
       const tipo = document.getElementById("tipoUsuario").value.trim();
       const nombre = document.getElementById("nombre").value.trim();
       if (!nombre) { showToast("Enter your full name", false); return false; }
-      if (!tipo) { showToast("Select student or professional", false); return false; 
+      if (!tipo) { showToast("Select student or professional", false); return false; }
       if (tipo === "profesional" && !document.getElementById("profesion").value.trim()) { showToast("Enter your profession", false); return false; }
       if (tipo === "estudiante" && (!document.getElementById("grado").value.trim() || !document.getElementById("grupo").value.trim())) { showToast("Enter grade and group", false); return false; }
 
