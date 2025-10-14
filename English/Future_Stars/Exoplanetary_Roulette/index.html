@@ -1,234 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exoplanetary Roulette</title>
-    <link rel="icon" href="https://leptonesboy.github.io/favicon_FS.jpg" type="image/jpeg">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/feather-icons"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-    <style>
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(calc(360deg * 15 + var(--stop-rotation))); }
-        }
-        .wheel {
-            transition-timing-function: cubic-bezier(0.1, 0.7, 0.1, 1);
-        }
-        .wheel-segment {
-            position: absolute;
-            width: 50%;
-            height: 50%;
-            transform-origin: bottom right;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            clip-path: polygon(0 0, 50% 0, 100% 100%, 0 100%);
-        }
-        .wheel-text {
-            position: absolute;
-            width: 100%;
-            text-align: center;
-            transform-origin: center;
-            color: white;
-            font-weight: bold;
-            font-size: 0.8rem;
-            padding: 0 10px;
-            box-sizing: border-box;
-        }
-.lg\:w-120 {
-            width: 30rem;
-        }
-        .lg\:h-120 {
-            height: 30rem;
-        }
-        .question-card {
-            transform: scale(0.95);
-            transition: all 0.3s ease;
-        }
-        .question-card:hover {
-            transform: scale(1);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exoplanetary Roulette</title>
+  <link rel="icon" href="https://leptonesboy.github.io/favicon_FS.jpg" type="image/jpeg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <style>
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(calc(360deg * 15 + var(--stop-rotation))); }
+    }
+    .wheel { transition-timing-function: cubic-bezier(0.1, 0.7, 0.1, 1); position: relative; }
+    .wheel-segment {
+      position: absolute; width: 50%; height: 50%;
+      transform-origin: bottom right; display: block;
+    }
+    .wheel-label {
+      position: absolute; color: white; font-weight: 700;
+      font-size: 1.2rem; pointer-events: none;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+      transform-origin: center;
+    }
+    .lg\:w-120 { width: 30rem; }
+    .lg\:h-120 { height: 30rem; }
+  </style>
 </head>
 <body class="bg-gradient-to-br from-purple-900 to-indigo-800 min-h-screen text-white">
-    <div class="container mx-auto px-4 py-10">
-        <header class="text-center mb-12">
-            <h1 class="text-4xl md:text-6xl font-bold mb-3 tracking-tight">Lepton Exploration 1</h1>
-            <h1 class="text-4xl md:text-3xl font-bold">Future Stars</h1>
-            <p class="text-xl text-purple-200">Spin the wheel and answer 14 questions about the short film</p>
-        </header>
-        <div class="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12">
-            <div class="relative w-72 h-72 md:w-96 md:h-96 lg:w-120 lg:h-120 mx-auto">
-<div id="wheel" class="wheel w-full h-full rounded-full border-8 border-yellow-400 bg-white relative overflow-hidden transition-transform duration-5000">
-                </div>
-                <div class="absolute top-0 left-1/2 -translate-x-1/2 -mt-4">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-400">
-                        <path d="M12 2L12 22M12 2L22 12M12 2L2 12"></path>
-                    </svg>
-                </div>
-                <button id="spin-btn" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-yellow-400 hover:bg-yellow-300 text-purple-900 font-bold w-16 h-16 rounded-full flex items-center justify-center transition-all shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-yellow-200">
-                    <i data-feather="rotate-cw"></i>
-                </button>
-            </div>
-            <div class="w-full lg:w-1/2 max-w-2xl mx-auto">
-                <div id="question-display" class="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl p-6 shadow-xl min-h-64 flex flex-col justify-center mx-4">
-<p id="current-question" class="text-center text-2xl font-medium mb-6 text-purple-100">Press the button to spin the wheel and get a question</p>
-                    <button id="answer-btn" class="hidden mt-4 bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 px-6 rounded-lg transition-all self-center">Show Answer</button>
-                </div>
+  <div class="container mx-auto px-4 py-10">
+    <header class="text-center mb-12">
+      <h1 class="text-4xl md:text-6xl font-bold mb-3 tracking-tight">Lepton Exploration 1</h1>
+      <h1 class="text-4xl md:text-3xl font-bold">Future Stars</h1>
+      <p class="text-xl text-purple-200">Spin the wheel and answer 14 questions about the short film</p>
+    </header>
 
-                <div id="answer-display" class="hidden mt-6 bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl p-6 shadow-xl">
-                    <h3 class="text-xl font-bold text-center text-yellow-300 mb-4">Answer:</h3>
-                    <p id="answer-text" class="text-center text-lg bg-purple-900 bg-opacity-50 rounded-lg p-4" style="display: block;"></p>
-</div>
-<div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 mx-auto max-w-md">
-                    <div class="bg-indigo-700 bg-opacity-50 rounded-lg p-4 text-center mx-2">
-<p class="text-sm text-purple-200">Questions Left</p>
-                        <p id="questions-left" class="text-3xl font-bold">14</p>
-                    </div>
-                    <div class="bg-indigo-700 bg-opacity-50 rounded-lg p-4 text-center mx-2">
-<p class="text-sm text-purple-200">Questions Answered</p>
-                        <p id="questions-answered" class="text-3xl font-bold">0</p>
+    <div class="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12">
+      <div class="relative w-72 h-72 md:w-96 md:h-96 lg:w-120 lg:h-120 mx-auto">
+        <div id="wheel" class="wheel w-full h-full rounded-full border-8 border-yellow-400 bg-white relative overflow-hidden transition-transform duration-5000"></div>
+        <div class="absolute -top-6 left-1/2 -translate-x-1/2">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="text-yellow-400"><path d="M12 2L12 22M12 2L22 12M12 2L2 12"></path></svg>
         </div>
-    </div>
-    <div class="container mx-auto px-4 py-10">
-</div>
+        <button id="spin-btn" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-yellow-400 hover:bg-yellow-300 text-purple-900 font-bold w-16 h-16 rounded-full flex items-center justify-center transition-all shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-yellow-200">
+          <i data-feather="rotate-cw"></i>
+        </button>
+      </div>
+
+      <div class="w-full lg:w-1/2 max-w-2xl mx-auto">
+        <div id="question-display" class="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl p-6 shadow-xl min-h-64 flex flex-col justify-center mx-4">
+          <p id="current-question" class="text-center text-2xl font-medium mb-6 text-purple-100">Press the button to spin the wheel and get a question</p>
+          <button id="answer-btn" class="hidden mt-4 bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 px-6 rounded-lg transition-all self-center">Show Answer</button>
         </div>
+
+        <div id="answer-display" class="hidden mt-6 bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl p-6 shadow-xl">
+          <h3 class="text-xl font-bold text-center text-yellow-300 mb-4">Answer:</h3>
+          <p id="answer-text" class="text-center text-lg bg-purple-900 bg-opacity-50 rounded-lg p-4"></p>
+        </div>
+
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 mx-auto max-w-md">
+          <div class="bg-indigo-700 bg-opacity-50 rounded-lg p-4 text-center mx-2">
+            <p class="text-sm text-purple-200">Questions Remaining</p>
+            <p id="questions-left" class="text-3xl font-bold">14</p>
+          </div>
+          <div class="bg-indigo-700 bg-opacity-50 rounded-lg p-4 text-center mx-2">
+            <p class="text-sm text-purple-200">Questions Answered</p>
+            <p id="questions-answered" class="text-3xl font-bold">0</p>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <script>
-        feather.replace();
-        const questions = [
-            { 
-                question: "What is an exoplanet?", 
-                answer: "An exoplanet is a planet that orbits a star other than our Sun." 
-            },
-            { 
-                question: "How can we identify an exoplanet?", 
-                answer: "It can be identified through the transit method (measuring the dimming of a star’s brightness when the planet passes in front of it)." 
-            },
-            { 
-                question: "What are the characteristics of exoplanet Kepler-442b?", 
-                answer: "Kepler-442b is a rocky super-Earth with a radius 1.34 times that of Earth, orbiting in the habitable zone of its star (an orange dwarf). It has an estimated equilibrium temperature of -40°C and receives about 70% of the sunlight that Earth does." 
-            },
-            { 
-                question: "What is the environment like on Kepler-442b?", 
-                answer: "Kepler-442b is believed to have a rocky surface and a high probability of liquid water due to its location in the habitable zone. It may have an atmosphere similar to Earth's." 
-            },
-{ 
-                question: "In what decade were the first exoplanets discovered?", 
-                answer: "In the 1990s." 
-            },
-            { 
-                question: "Why are some exoplanets called super-Earths?", 
-                answer: "They are called super-Earths because they are rocky planets like Earth but with a mass between 2 and 10 times greater. Their surface gravity would be stronger, and they could have denser atmospheres." 
-            },
-            { 
-                question: "In which constellation is the exoplanet Kepler-442b located?", 
-                answer: "Kepler-442b is located in the constellation Lyra." 
-            },
-            { 
-                question: "What are the characteristics of the Starship 4.0 spacecraft?", 
-                answer: "Starship is a fully reusable rocket 120m tall, capable of carrying 100 tons of cargo or 100 passengers. It uses Raptor engines that burn methane and liquid oxygen, and it is designed for missions to the Moon, Mars, and beyond." 
-            },
-{ 
-                question: "What are the names of the characters in the short film?", 
-                answer: "The astronaut’s name is Steve, and he is accompanied by Lepton, a humanoid robot." 
-            },
-            { 
-                question: "Do you think space exploration is important?", 
-                answer: "(Open question)" 
-            },
-            { 
-                question: "Would you like to live on an exoplanet? Why?", 
-                answer: "(Open question)" 
-            },
-            { 
-                question: "Why is Kepler-442b said to resemble Earth?", 
-                answer: "Kepler-442b is considered Earth-like because: 1) It is rocky, 2) It orbits in the habitable zone, 3) It has a similar size (1.34 Earth radii), 4) It likely has liquid water, and 5) It receives a similar amount of stellar light (70% of what Earth receives from the Sun)." 
-            },
-{ 
-                question: "Do you think the short film helped you learn about exoplanets?", 
-                answer: "(Open question)" 
-            },
-            { 
-                question: "What do you think Kepler-442b would need if we wanted to live there?", 
-                answer: "(Open question)" 
-            }
-        ];
-let remainingQuestions = [...questions];
-        let currentQuestion = null;
-        let isSpinning = false;
+  <script>
+    feather.replace();
+    const questions = [
+      { question: "What is an exoplanet?", answer: "An exoplanet is a planet that orbits a star other than our Sun." },
+      { question: "How can we identify an exoplanet?", answer: "By using the transit method, observing the dimming of a star’s light." },
+      { question: "What are the characteristics of the exoplanet Kepler-442b?", answer: "It’s a rocky super-Earth located in its star’s habitable zone." },
+      { question: "What is the environment of the exoplanet Kepler-442b?", answer: "It is estimated to have a rocky surface and possibly liquid water." },
+      { question: "In which decade were the first exoplanets discovered?", answer: "In the 1990s." },
+      { question: "Why are they called super-Earths?", answer: "Because they are rocky planets like Earth but with greater mass." },
+      { question: "In which constellation is Kepler-442b located?", answer: "In the constellation Lyra." },
+      { question: "What are the characteristics of the Starship 4.0 spacecraft?", answer: "A reusable rocket prototype for interstellar travel." },
+      { question: "What does 'habitable zone' mean?", answer: "It’s the region where conditions allow liquid water to exist." },
+      { question: "What is the Doppler method?", answer: "Detecting planets by measuring changes in a star’s radial velocity." },
+      { question: "Why was the Kepler telescope important?", answer: "It allowed the discovery of thousands of exoplanets using the transit method." },
+      { question: "What conditions are necessary for life?", answer: "Liquid water, atmosphere, energy, and elements like carbon." },
+      { question: "What do we learn from studying exoplanets?", answer: "It helps us understand the formation of planetary systems and life." },
+      { question: "Which planet in the Solar System is most similar to a super-Earth?", answer: "None exactly, although Earth is the main reference." }
+    ];
 
-        const wheel = document.getElementById('wheel');
-        const colors = [
-            'bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500',
-            'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-teal-500',
-            'bg-orange-500', 'bg-amber-500', 'bg-lime-500', 'bg-cyan-500',
-            'bg-violet-500', 'bg-fuchsia-500', 'bg-rose-500'
-        ];
-        questions.forEach((q, index) => {
-            const angle = (360 / questions.length) * index;
-            const segment = document.createElement('div');
-            segment.className = `wheel-segment ${colors[index]}`;
-            segment.style.transform = `rotate(${angle}deg)`;
-            
-            const questionText = document.createElement('div');
-            questionText.className = 'wheel-text';
-            questionText.style.transform = `rotate(${angle + (360 / questions.length / 2)}deg)`;
-            questionText.textContent = q.question;
-            
-            segment.appendChild(questionText);
-            wheel.appendChild(segment);
-        });
-        document.getElementById('spin-btn').addEventListener('click', () => {
-            if (isSpinning || remainingQuestions.length === 0) return;
-            
-            isSpinning = true;
-            const spinBtn = document.getElementById('spin-btn');
-            spinBtn.disabled = true;
-            spinBtn.innerHTML = '<i data-feather="loader" class="animate-spin"></i>';
-            feather.replace();
+    const wheel = document.getElementById('wheel');
+    const spinBtn = document.getElementById('spin-btn');
+    const currentQuestion = document.getElementById('current-question');
+    const answerBtn = document.getElementById('answer-btn');
+    const answerDisplay = document.getElementById('answer-display');
+    const answerText = document.getElementById('answer-text');
+    const questionsLeft = document.getElementById('questions-left');
+    const questionsAnswered = document.getElementById('questions-answered');
 
-                const segmentAngle = 360 / questions.length;
-            const stopRotation = Math.floor(Math.random() * 360);
-            const selectedSegment = Math.floor(stopRotation / segmentAngle);
-            
-            let adjustedIndex = selectedSegment % remainingQuestions.length;
-            currentQuestion = remainingQuestions[adjustedIndex];
-            remainingQuestions.splice(adjustedIndex, 1);
-            wheel.style.setProperty('--stop-rotation', `${stopRotation}deg`);
-            wheel.style.animation = 'spin 5s forwards';
-setTimeout(() => {
-                wheel.style.animation = 'none';
-                wheel.style.transform = `rotate(${stopRotation}deg)`;
+    let remainingQuestions = [...questions];
+    let totalAnswered = 0;
 
-                document.getElementById('current-question').textContent = `Question: ${currentQuestion.question}`;
-document.getElementById('answer-btn').classList.remove('hidden');
-                document.getElementById('answer-text').classList.add('hidden');
-                
-                document.getElementById('questions-left').textContent = remainingQuestions.length;
-                document.getElementById('questions-answered').textContent = questions.length - remainingQuestions.length;
-                
-                isSpinning = false;
-                spinBtn.disabled = false;
-                spinBtn.innerHTML = '<i data-feather="rotate-cw"></i>';
-                feather.replace();
-            }, 7000);
-});
-        document.getElementById('answer-btn').addEventListener('click', () => {
-            document.getElementById('answer-text').textContent = currentQuestion.answer || "This question doesn’t have a defined answer. Think of your own!";
-            document.getElementById('answer-display').classList.remove('hidden');
-            document.getElementById('answer-btn').classList.add('hidden');
-            document.getElementById('answer-text').style.display = 'block';
-});
+    function createWheel() {
+      const colors = ["#7c3aed","#6d28d9","#5b21b6","#4c1d95","#3b0764","#9333ea","#a855f7","#c084fc","#8b5cf6","#7e22ce","#6b21a8","#581c87","#4c1d95","#3b0764"];
+      const segmentAngle = 360 / questions.length;
+      const radius = 140;
+      const center = 180;
 
-        document.getElementById('spin-btn').addEventListener('click', () => {
-            document.getElementById('answer-display').classList.add('hidden');
-        });
-        wheel.style.transform = 'rotate(0deg)';
-    </script>
+      questions.forEach((q, i) => {
+        const segment = document.createElement('div');
+        segment.classList.add('wheel-segment');
+        segment.style.background = colors[i % colors.length];
+        segment.style.transform = `rotate(${i * segmentAngle}deg) skewY(${90 - segmentAngle}deg)`;
+        wheel.appendChild(segment);
+
+        const label = document.createElement('div');
+        label.classList.add('wheel-label');
+        label.innerText = i + 1;
+        const angle = (i * segmentAngle + segmentAngle / 2) * Math.PI / 180;
+        const x = center + radius * Math.cos(angle);
+        const y = center + radius * Math.sin(angle);
+        label.style.left = `${x}px`;
+        label.style.top = `${y}px`;
+        label.style.transform = `translate(-50%, -50%) rotate(${i * segmentAngle + 90}deg)`;
+        wheel.appendChild(label);
+      });
+    }
+
+    function spinWheel() {
+      if (remainingQuestions.length === 0) {
+        currentQuestion.innerText = "You’ve answered all the questions!";
+        answerBtn.classList.add("hidden");
+        return;
+      }
+      const randomIndex = Math.floor(Math.random() * remainingQuestions.length);
+      const selected = remainingQuestions[randomIndex];
+      const segmentAngle = 360 / questions.length;
+      const stopRotation = 360 - (randomIndex * segmentAngle + segmentAngle / 2);
+
+      wheel.style.setProperty('--stop-rotation', `${stopRotation}deg`);
+      wheel.style.animation = 'none';
+      wheel.offsetHeight;
+      wheel.style.animation = 'spin 5s forwards';
+
+      setTimeout(() => {
+        currentQuestion.innerText = selected.question;
+        answerBtn.classList.remove("hidden");
+        answerDisplay.classList.add("hidden");
+        answerText.innerText = selected.answer;
+
+        remainingQuestions.splice(randomIndex, 1);
+        totalAnswered++;
+        questionsLeft.innerText = remainingQuestions.length;
+        questionsAnswered.innerText = totalAnswered;
+      }, 5000);
+    }
+
+    spinBtn.addEventListener('click', spinWheel);
+    answerBtn.addEventListener('click', () => {
+      answerDisplay.classList.remove("hidden");
+    });
+
+    createWheel();
+  </script>
 </body>
 </html>
