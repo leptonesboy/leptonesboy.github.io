@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Calculadora de huella de carbono COLBOYD</title>
+  <link rel="icon" href="https://calculadorahuellacarbono.github.io/favicon_vi.png" type="image/png">
+  <style>
+    body {
+      background-color: #FFFFFF;
+      font-family: 'Comic Sans MS', sans-serif;
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 15px;
+    }
+    h1, h3 { text-align: center; color: #000000; }
+    h4 { font-weight: normal; text-align: left; font-family: Arial, Helvetica, sans-serif; }
+    .pregunta {
+      background-color: #c8e6c9;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+    label { font-size: 18px; margin-bottom: 10px; display: block; }
+    input[type="text"], input[type="number"], select {
+      font-size: 16px;
+      padding: 8px;
+      border-radius: 8px;
+      margin-top: 8px;
+      display: block;
+      width: calc(100% - 16px);
+      box-sizing: border-box;
+    }
+    .opciones.verticales {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      margin-top: 5px;
+    }
+    .opciones.verticales label {
+      font-size: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      margin: 0;
+      padding: 0;
+    }
+    button {
+      margin-top: 30px;
+      padding: 12px;
+      font-size: 18px;
+      width: 100%;
+      background-color: #006400;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover { background-color: #42a5f5; }
+    #resultado {
+      margin-top: 30px;
+      background-color: #c8e6c9;
+      padding: 20px;
+      border-radius: 10px;
+      font-size: 18px;
+      border: 1px solid #388e3c;
+      white-space: pre-wrap;
+    }
+    .acordeon {
+      margin: 20px 0;
+      border: 1px solid #388e3c;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .acordeon-titulo {
+      background-color: #c8e6c9;
+      padding: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+    }
+    .acordeon-contenido {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+      background-color: #f9fff9;
+      padding: 0 12px;
+    }
+    .acordeon-contenido p {
+      margin: 12px 0;
+      font-size: 16px;
+    }
+    .acordeon.activo .acordeon-contenido {
+      max-height: 500px;
+      padding: 12px;
+    }
+    .toast {
+      visibility: hidden;
+      min-width: 250px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 10px;
+      padding: 16px;
+      position: fixed;
+      z-index: 1000;
+      left: 50%;
+      bottom: 30px;
+      transform: translateX(-50%);
+      font-size: 17px;
+      opacity: 0;
+      transition: opacity 0.4s, bottom 0.4s;
+    }
+    .toast.show {
+      visibility: visible;
+      opacity: 1;
+      bottom: 50px;
+    }
+    .toast.success { background-color: #4CAF50; }
+    .toast.error { background-color: #f44336; }
+  </style>
+</head>
+<body>
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 20px;">
+    <div style="flex: 1; display: flex; justify-content: flex-start;">
+      <img src="https://calculadorahuellacarbono.github.io/favicon_CBD.jpg" alt="Logo COLBOYD" style="width: 120px; height: auto;" />
+    </div>
+    <div style="flex: 1; display: flex; justify-content: center; align-items: center; gap: 20px;">
+      <img src="https://calculadorahuellacarbono.github.io/favicon_LB.jpg" alt="Logo Leptones BOY" style="width: 100px; height: auto;" />
+      <img src="https://calculadorahuellacarbono.github.io/favicon_vi.png" alt="Logo Vital Impact" style="width: 150px; height: auto;" />
+    </div>
+    <div style="flex: 1; display: flex; justify-content: flex-end;">
+      <img src="https://calculadorahuellacarbono.github.io/favicon_ME.png" alt="Logo MinEducación" style="width: 170px; height: auto;" />
+    </div>
+  </div>
+
+  <h1>Mi Huella de Carbono COLBOYD</h1>
+  <h3>"Transforma tu huella, transforma el planeta"</h3>
+
+  <div class="acordeon">
+    <div class="acordeon-titulo">¿Sabes qué es la Huella de Carbono?</div>
+    <div class="acordeon-contenido">
+      <p>Las emisiones de CO₂ que produces al año son una de las grandes variables en el aumento del calentamiento global, ya que contribuyen al efecto invernadero y aceleran los cambios en el clima.</p>
+      <p>Podemos disminuir nuestra huella de carbono apagando las luces cuando no las usamos, reciclando, usando bicicleta o transporte público, y consumiendo menos carne.</p>
+    </div>
+  </div>
+
+  <form id="formCalc" onsubmit="return prepararYEnviar();">
+    <div class="pregunta">
+      <label>Nombre completo:</label>
+      <input type="text" id="nombre" name="nombre" placeholder="Escribe tu nombre completo" />
+    </div>
+    <div class="pregunta">
+      <label>¿Eres estudiante o profesional?</label>
+      <select id="tipoUsuario" name="tipoUsuario" onchange="cambiarTipo()">
+        <option value="">-Seleccione Uno-</option>
+        <option value="profesional">Profesional</option>
+        <option value="estudiante">Estudiante</option>
+      </select>
+    </div>
+    <div class="pregunta" id="divProfesional" style="display:none;">
+      <label>Profesión:</label>
+      <input type="text" id="profesion" name="profesion" placeholder="Ejemplo: Ingeniero, Profesor" />
+    </div>
+    <div class="pregunta" id="divEstudiante" style="display:none;">
+      <label>Grado:</label>
+      <input type="text" id="grado" name="grado" placeholder="Ejemplo: 10" />
+      <label>Grupo:</label>
+      <input type="text" id="grupo" name="grupo" placeholder="Ejemplo: 01" />
+    </div>
+    <div class="pregunta">
+      <label>¿Cuántos días a la semana usas carro?</label>
+      <input type="number" id="carro" name="carro" min="0" max="7" />
+    </div>
+    <div class="pregunta">
+      <label>¿Cuántos días a la semana usas bus?</label>
+      <input type="number" id="bus" name="bus" min="0" max="7" />
+    </div>
+    <div class="pregunta">
+      <label>¿Cuántos días a la semana usas moto?</label>
+      <input type="number" id="moto" name="moto" min="0" max="7" />
+    </div>
+    <div class="pregunta">
+      <label>¿Reciclas en casa?</label>
+      <div class="opciones verticales">
+        <label><input type="radio" name="reciclaje" value="0"> Siempre</label>
+        <label><input type="radio" name="reciclaje" value="1"> Algunas veces</label>
+        <label><input type="radio" name="reciclaje" value="2"> Nunca</label>
+      </div>
+    </div>
+    <div class="pregunta">
+      <label>¿Apagas las luces cuando no las usas?</label>
+      <div class="opciones verticales">
+        <label><input type="radio" name="luzSeleccionada" value="0"> Siempre</label>
+        <label><input type="radio" name="luzSeleccionada" value="1"> Algunas veces</label>
+        <label><input type="radio" name="luzSeleccionada" value="2"> Nunca</label>
+      </div>
+    </div>
+    <div class="pregunta">
+      <label>¿Consumes carne todos los días?</label>
+      <div class="opciones verticales">
+        <label><input type="radio" name="carne" value="2"> Siempre</label>
+        <label><input type="radio" name="carne" value="1"> Algunas veces</label>
+        <label><input type="radio" name="carne" value="0"> Nunca</label>
+      </div>
+    </div>
+    <button type="submit">Calcular y enviar</button>
+  </form>
+
+  <div id="resultado"></div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    function showToast(msg, success = true) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.className = `toast show ${success ? "success" : "error"}`;
+      setTimeout(() => { toast.className = "toast"; }, 4000);
+    }
+
+    function cambiarTipo() {
+      const tipo = document.getElementById("tipoUsuario").value;
+      document.getElementById("divProfesional").style.display = tipo === "profesional" ? "block" : "none";
+      document.getElementById("divEstudiante").style.display = tipo === "estudiante" ? "block" : "none";
+    }
+
+    function prepararYEnviar() {
+      const tipo = document.getElementById("tipoUsuario").value.trim();
+      const nombre = document.getElementById("nombre").value.trim();
+      if (!tipo) { showToast("Selecciona estudiante o profesional", false); return false; }
+      if (!nombre) { showToast("Ingresa tu nombre completo", false); return false; }
+      if (tipo === "profesional" && !document.getElementById("profesion").value.trim()) { showToast("Ingresa tu profesión", false); return false; }
+      if (tipo === "estudiante" && (!document.getElementById("grado").value.trim() || !document.getElementById("grupo").value.trim())) { showToast("Ingresa grado y grupo", false); return false; }
+
+      const carro = parseInt(document.getElementById("carro").value) || 0;
+      const bus = parseInt(document.getElementById("bus").value) || 0;
+      const moto = parseInt(document.getElementById("moto").value) || 0;
+      const luzRadio = document.querySelector('input[name="luzSeleccionada"]:checked');
+      const reciclajeRadio = document.querySelector('input[name="reciclaje"]:checked');
+      const carneRadio = document.querySelector('input[name="carne"]:checked');
+      if (!luzRadio || !reciclajeRadio || !carneRadio) { showToast("Selecciona todas las opciones", false); return false; }
+
+      const luzSeleccionada = parseInt(luzRadio.value);
+      const reciclaje = parseInt(reciclajeRadio.value);
+      const carne = parseInt(carneRadio.value);
+      const emisionesCarro = 2.415 * 52;
+      const emisionesBus = 10 * 0.15 * 52;
+      const emisionesMoto = 15 * 0.046 * 52;
+      const emisionesLuz = [0, 350, 700];
+      const emisionesReciclaje = [0, 150, 300];
+      const totalKg = carro * emisionesCarro + bus * emisionesBus + moto * emisionesMoto + emisionesLuz[luzSeleccionada] + carne * 900 + emisionesReciclaje[reciclaje];
+      const totalToneladas = totalKg / 1000;
+      const media = 1.6;
+      let mensaje = `${nombre}, tu huella de carbono anual es de ${totalToneladas.toFixed(2)} toneladas de CO₂.\n\n`;
+      if (totalToneladas < media) mensaje += "¡Estás por debajo del promedio de Colombia (1.6 t por persona)! Muy bien cuidando el planeta.";
+      else if (totalToneladas > media) mensaje += "Estás por encima del promedio de Colombia (1.6 t por persona). Puedes mejorar con pequeños cambios.";
+      else mensaje += "Estás justo en el promedio de Colombia (1.6 t por persona).";
+      document.getElementById("resultado").textContent = mensaje;
+
+      const data = {
+        tipoUsuario: tipo,
+        nombre: nombre,
+        profesion: document.getElementById("profesion").value.trim(),
+        grado: document.getElementById("grado").value.trim(),
+        grupo: document.getElementById("grupo").value.trim(),
+        carro, bus, moto, reciclaje, luzSeleccionada, carne,
+        resultado: totalToneladas.toFixed(2)
+      };
+
+      const url = "https://script.google.com/macros/s/AKfycbwivUYh3OqfdKLWUuKHBD6YeoIgSBJI07BY8U-XlHk2D997kfEoi8vUOee2zQ2UpKif/exec";
+
+      fetch(url, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      })
+      .then(() => showToast("¡Datos enviados correctamente!"))
+      .catch(() => showToast("Error al enviar los datos", false));
+
+      return false;
+    }
+
+    document.querySelectorAll(".acordeon").forEach((acordeon) => {
+      const titulo = acordeon.querySelector(".acordeon-titulo");
+      titulo.addEventListener("click", () => {
+        document.querySelectorAll(".acordeon").forEach((otro) => { if (otro !== acordeon) otro.classList.remove("activo"); });
+        acordeon.classList.toggle("activo");
+      });
+    });
+  </script>
+</body>
+</html>
