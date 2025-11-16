@@ -124,6 +124,7 @@
   </style>
 </head>
 <body>
+
   <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 20px;">
     <div style="flex: 1; display: flex; justify-content: flex-start;">
       <img src="https://calculadorahuellacarbono.github.io/favicon_CBD.jpg" alt="Logo COLBOYD" style="width: 120px; height: auto;" />
@@ -151,38 +152,52 @@
   <form id="formCalc" onsubmit="return prepararYEnviar();">
     <div class="pregunta">
       <label>Nombre completo:</label>
-      <input type="text" id="nombre" name="nombre" placeholder="Escribe tu nombre completo" />
+      <input type="text" id="nombre" />
     </div>
+
     <div class="pregunta">
       <label>¿Eres estudiante o profesional?</label>
-      <select id="tipoUsuario" name="tipoUsuario" onchange="cambiarTipo()">
+      <select id="tipoUsuario" onchange="cambiarTipo()">
         <option value="">-Seleccione Uno-</option>
         <option value="profesional">Profesional</option>
         <option value="estudiante">Estudiante</option>
       </select>
     </div>
+
     <div class="pregunta" id="divProfesional" style="display:none;">
       <label>Profesión:</label>
-      <input type="text" id="profesion" name="profesion" placeholder="Ejemplo: Ingeniero, Profesor" />
+      <input type="text" id="profesion" placeholder="Ejemplo: Ingeniero, Profesor" />
+      <label></label>
+      <label>Organización (o Ninguna):</label>
+      <input type="text" id="organizacion" placeholder="Ejemplo: Empresa X o Ninguna" />
     </div>
+
     <div class="pregunta" id="divEstudiante" style="display:none;">
       <label>Grado:</label>
-      <input type="text" id="grado" name="grado" placeholder="Ejemplo: 10" />
+      <input type="text" id="grado" placeholder="Ejemplo: 10" />
+      <label></label>
       <label>Grupo:</label>
-      <input type="text" id="grupo" name="grupo" placeholder="Ejemplo: 01" />
+      <input type="text" id="grupo" placeholder="01" />
+      <label></label>
+      <label>Institución educativa:</label>
+      <input type="text" id="institucion" placeholder="Ejemplo: Colegio XYZ" />
     </div>
+
     <div class="pregunta">
       <label>¿Cuántos días a la semana usas carro?</label>
-      <input type="number" id="carro" name="carro" min="0" max="7" />
+      <input type="number" id="carro" min="0" max="7" />
     </div>
+
     <div class="pregunta">
       <label>¿Cuántos días a la semana usas bus?</label>
-      <input type="number" id="bus" name="bus" min="0" max="7" />
+      <input type="number" id="bus" min="0" max="7" />
     </div>
+
     <div class="pregunta">
       <label>¿Cuántos días a la semana usas moto?</label>
-      <input type="number" id="moto" name="moto" min="0" max="7" />
+      <input type="number" id="moto" min="0" max="7" />
     </div>
+
     <div class="pregunta">
       <label>¿Reciclas en casa?</label>
       <div class="opciones verticales">
@@ -191,6 +206,7 @@
         <label><input type="radio" name="reciclaje" value="2"> Nunca</label>
       </div>
     </div>
+
     <div class="pregunta">
       <label>¿Apagas las luces cuando no las usas?</label>
       <div class="opciones verticales">
@@ -199,6 +215,7 @@
         <label><input type="radio" name="luzSeleccionada" value="2"> Nunca</label>
       </div>
     </div>
+
     <div class="pregunta">
       <label>¿Consumes carne todos los días?</label>
       <div class="opciones verticales">
@@ -207,6 +224,7 @@
         <label><input type="radio" name="carne" value="0"> Nunca</label>
       </div>
     </div>
+
     <button type="submit">Calcular y enviar</button>
   </form>
 
@@ -215,6 +233,7 @@
   <div id="toast" class="toast"></div>
 
   <script>
+
     function showToast(msg, success = true) {
       const toast = document.getElementById("toast");
       toast.textContent = msg;
@@ -229,12 +248,28 @@
     }
 
     function prepararYEnviar() {
+
       const tipo = document.getElementById("tipoUsuario").value.trim();
       const nombre = document.getElementById("nombre").value.trim();
+
       if (!tipo) { showToast("Selecciona estudiante o profesional", false); return false; }
       if (!nombre) { showToast("Ingresa tu nombre completo", false); return false; }
-      if (tipo === "profesional" && !document.getElementById("profesion").value.trim()) { showToast("Ingresa tu profesión", false); return false; }
-      if (tipo === "estudiante" && (!document.getElementById("grado").value.trim() || !document.getElementById("grupo").value.trim())) { showToast("Ingresa grado y grupo", false); return false; }
+
+      if (tipo === "profesional") {
+        if (!document.getElementById("profesion").value.trim()) { showToast("Ingresa tu profesión", false); return false; }
+        if (!document.getElementById("organizacion").value.trim()) { showToast("Ingresa organización o Ninguna", false); return false; }
+      }
+
+      if (tipo === "estudiante") {
+        if (!document.getElementById("grado").value.trim() || !document.getElementById("grupo").value.trim()) {
+          showToast("Ingresa grado y grupo", false);
+          return false;
+        }
+        if (!document.getElementById("institucion").value.trim()) {
+          showToast("Ingresa la institución educativa", false);
+          return false;
+        }
+      }
 
       const carro = parseInt(document.getElementById("carro").value) || 0;
       const bus = parseInt(document.getElementById("bus").value) || 0;
@@ -242,31 +277,48 @@
       const luzRadio = document.querySelector('input[name="luzSeleccionada"]:checked');
       const reciclajeRadio = document.querySelector('input[name="reciclaje"]:checked');
       const carneRadio = document.querySelector('input[name="carne"]:checked');
-      if (!luzRadio || !reciclajeRadio || !carneRadio) { showToast("Selecciona todas las opciones", false); return false; }
+
+      if (!luzRadio || !reciclajeRadio || !carneRadio) {
+        showToast("Selecciona todas las opciones", false);
+        return false;
+      }
 
       const luzSeleccionada = parseInt(luzRadio.value);
       const reciclaje = parseInt(reciclajeRadio.value);
       const carne = parseInt(carneRadio.value);
+
       const emisionesCarro = 2.415 * 52;
       const emisionesBus = 10 * 0.15 * 52;
       const emisionesMoto = 15 * 0.046 * 52;
       const emisionesLuz = [0, 350, 700];
       const emisionesReciclaje = [0, 150, 300];
-      const totalKg = carro * emisionesCarro + bus * emisionesBus + moto * emisionesMoto + emisionesLuz[luzSeleccionada] + carne * 900 + emisionesReciclaje[reciclaje];
+
+      const totalKg =
+        carro * emisionesCarro +
+        bus * emisionesBus +
+        moto * emisionesMoto +
+        emisionesLuz[luzSeleccionada] +
+        carne * 900 +
+        emisionesReciclaje[reciclaje];
+
       const totalToneladas = totalKg / 1000;
       const media = 1.6;
+
       let mensaje = `${nombre}, tu huella de carbono anual es de ${totalToneladas.toFixed(2)} toneladas de CO₂.\n\n`;
-      if (totalToneladas < media) mensaje += "¡Estás por debajo del promedio de Colombia (1.6 t por persona)! Muy bien cuidando el planeta.";
-      else if (totalToneladas > media) mensaje += "Estás por encima del promedio de Colombia (1.6 t por persona). Puedes mejorar con pequeños cambios.";
-      else mensaje += "Estás justo en el promedio de Colombia (1.6 t por persona).";
+      if (totalToneladas < media) mensaje += "Estás por debajo del promedio de Colombia (1,6 t) Sigue así.";
+      else if (totalToneladas > media) mensaje += "Estás por encima del promedio de Colombia (1,6 t) Intenta reducir tu huella de carbono.";
+      else mensaje += "Estás justo en el promedio de Colombia (1,6 t). Vas por buen camino";
+
       document.getElementById("resultado").textContent = mensaje;
 
       const data = {
         tipoUsuario: tipo,
         nombre: nombre,
         profesion: document.getElementById("profesion").value.trim(),
+        organizacion: document.getElementById("organizacion").value.trim(),
         grado: document.getElementById("grado").value.trim(),
         grupo: document.getElementById("grupo").value.trim(),
+        institucion: document.getElementById("institucion").value.trim(),
         carro, bus, moto, reciclaje, luzSeleccionada, carne,
         resultado: totalToneladas.toFixed(2)
       };
@@ -292,6 +344,7 @@
         acordeon.classList.toggle("activo");
       });
     });
+
   </script>
 </body>
 </html>
