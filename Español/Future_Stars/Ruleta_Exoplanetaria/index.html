@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ruleta Exoplanetaria</title>
+  <link rel="icon" href="https://leptonesboy.github.io/favicon_FS.jpg" type="image/jpeg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <style>
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(calc(360deg * 15 + var(--stop-rotation))); }
+    }
+    .wheel { transition-timing-function: cubic-bezier(0.1, 0.7, 0.1, 1); position: relative; }
+    .wheel-segment {
+      position: absolute; width: 50%; height: 50%;
+      transform-origin: bottom right; display: block;
+    }
+    .wheel-label {
+      position: absolute; color: white; font-weight: 700;
+      font-size: 1.2rem; pointer-events: none;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+      transform-origin: center;
+    }
+    .lg\:w-120 { width: 30rem; }
+    .lg\:h-120 { height: 30rem; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-purple-900 to-indigo-800 min-h-screen text-white">
+  <div class="container mx-auto px-4 py-10">
+    <header class="text-center mb-12">
+      <h1 class="text-4xl md:text-6xl font-bold mb-3 tracking-tight">Lepton Exploration 1</h1>
+      <h1 class="text-4xl md:text-3xl font-bold">Future Stars</h1>
+      <p class="text-xl text-purple-200">Gira la ruleta y responde 14 preguntas sobre el cortometraje</p>
+    </header>
+
+    <div class="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12">
+      <div class="relative w-72 h-72 md:w-96 md:h-96 lg:w-120 lg:h-120 mx-auto">
+        <div id="wheel" class="wheel w-full h-full rounded-full border-8 border-yellow-400 bg-white relative overflow-hidden transition-transform duration-5000"></div>
+        <div class="absolute -top-6 left-1/2 -translate-x-1/2">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="text-yellow-400"><path d="M12 2L12 22M12 2L22 12M12 2L2 12"></path></svg>
+        </div>
+        <button id="spin-btn" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-yellow-400 hover:bg-yellow-300 text-purple-900 font-bold w-16 h-16 rounded-full flex items-center justify-center transition-all shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-yellow-200">
+          <i data-feather="rotate-cw"></i>
+        </button>
+      </div>
+
+      <div class="w-full lg:w-1/2 max-w-2xl mx-auto">
+        <div id="question-display" class="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl p-6 shadow-xl min-h-64 flex flex-col justify-center mx-4">
+          <p id="current-question" class="text-center text-2xl font-medium mb-6 text-purple-100">Presiona el botón para girar la ruleta y obtener una pregunta</p>
+          <button id="answer-btn" class="hidden mt-4 bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 px-6 rounded-lg transition-all self-center">Mostrar respuesta</button>
+        </div>
+
+        <div id="answer-display" class="hidden mt-6 bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl p-6 shadow-xl">
+          <h3 class="text-xl font-bold text-center text-yellow-300 mb-4">Respuesta:</h3>
+          <p id="answer-text" class="text-center text-lg bg-purple-900 bg-opacity-50 rounded-lg p-4"></p>
+        </div>
+
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 mx-auto max-w-md">
+          <div class="bg-indigo-700 bg-opacity-50 rounded-lg p-4 text-center mx-2">
+            <p class="text-sm text-purple-200">Preguntas restantes</p>
+            <p id="questions-left" class="text-3xl font-bold">14</p>
+          </div>
+          <div class="bg-indigo-700 bg-opacity-50 rounded-lg p-4 text-center mx-2">
+            <p class="text-sm text-purple-200">Preguntas respondidas</p>
+            <p id="questions-answered" class="text-3xl font-bold">0</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    feather.replace();
+    const questions = [
+      { question: "¿Qué es un exoplaneta?", answer: "Un exoplaneta es un planeta que orbita una estrella distinta al Sol." },
+      { question: "¿Cómo podemos identificar un exoplaneta?", answer: "Mediante el método de tránsito, observando la disminución de luz de una estrella." },
+      { question: "¿Cuáles son las características del exoplaneta Kepler-442b?", answer: "Es una supertierra rocosa situada en la zona habitable de su estrella." },
+      { question: "¿Cómo es el ambiente del exoplaneta Kepler-442b?", answer: "Se estima que tiene superficie rocosa y posiblemente agua líquida." },
+      { question: "¿En qué década se descubrieron los primeros exoplanetas?", answer: "En la década de 1990." },
+      { question: "¿Por qué se llaman supertierras?", answer: "Porque son planetas rocosos como la Tierra pero con mayor masa." },
+      { question: "¿En qué constelación se encuentra Kepler-442b?", answer: "En la constelación de Lyra." },
+      { question: "¿Cuáles son las características de la nave Starship 4.0?", answer: "Es un prototipo de cohete reutilizable para viajes interestelares." },
+      { question: "¿Qué significa 'zona habitable'?", answer: "Es la región donde pueden existir condiciones para que haya agua líquida." },
+      { question: "¿Qué es el método Doppler?", answer: "Detectar planetas midiendo cambios en la velocidad radial de una estrella." },
+      { question: "¿Por qué fue importante el telescopio Kepler?", answer: "Permitió descubrir miles de exoplanetas mediante el método de tránsito." },
+      { question: "¿Qué condiciones son necesarias para la vida?", answer: "Agua líquida, atmósfera, energía y elementos como el carbono." },
+      { question: "¿Qué aprendemos estudiando exoplanetas?", answer: "Nos ayuda a entender la formación de sistemas planetarios y la vida." },
+      { question: "¿Qué planeta del Sistema Solar es más parecido a una supertierra?", answer: "Ninguno exactamente, aunque la Tierra es la referencia principal." }
+    ];
+
+    const wheel = document.getElementById('wheel');
+    const spinBtn = document.getElementById('spin-btn');
+    const currentQuestion = document.getElementById('current-question');
+    const answerBtn = document.getElementById('answer-btn');
+    const answerDisplay = document.getElementById('answer-display');
+    const answerText = document.getElementById('answer-text');
+    const questionsLeft = document.getElementById('questions-left');
+    const questionsAnswered = document.getElementById('questions-answered');
+
+    let remainingQuestions = [...questions];
+    let totalAnswered = 0;
+
+    function createWheel() {
+      const colors = ["#7c3aed","#6d28d9","#5b21b6","#4c1d95","#3b0764","#9333ea","#a855f7","#c084fc","#8b5cf6","#7e22ce","#6b21a8","#581c87","#4c1d95","#3b0764"];
+      const segmentAngle = 360 / questions.length;
+      const radius = 140;
+      const center = 180;
+
+      questions.forEach((q, i) => {
+        const segment = document.createElement('div');
+        segment.classList.add('wheel-segment');
+        segment.style.background = colors[i % colors.length];
+        segment.style.transform = `rotate(${i * segmentAngle}deg) skewY(${90 - segmentAngle}deg)`;
+        wheel.appendChild(segment);
+
+        const label = document.createElement('div');
+        label.classList.add('wheel-label');
+        label.innerText = i + 1;
+        const angle = (i * segmentAngle + segmentAngle / 2) * Math.PI / 180;
+        const x = center + radius * Math.cos(angle);
+        const y = center + radius * Math.sin(angle);
+        label.style.left = `${x}px`;
+        label.style.top = `${y}px`;
+        label.style.transform = `translate(-50%, -50%) rotate(${i * segmentAngle + 90}deg)`;
+        wheel.appendChild(label);
+      });
+    }
+
+    function spinWheel() {
+      if (remainingQuestions.length === 0) {
+        currentQuestion.innerText = "¡Has respondido todas las preguntas!";
+        answerBtn.classList.add("hidden");
+        return;
+      }
+      const randomIndex = Math.floor(Math.random() * remainingQuestions.length);
+      const selected = remainingQuestions[randomIndex];
+      const segmentAngle = 360 / questions.length;
+      const stopRotation = 360 - (randomIndex * segmentAngle + segmentAngle / 2);
+
+      wheel.style.setProperty('--stop-rotation', `${stopRotation}deg`);
+      wheel.style.animation = 'none';
+      wheel.offsetHeight;
+      wheel.style.animation = 'spin 5s forwards';
+
+      setTimeout(() => {
+        currentQuestion.innerText = selected.question;
+        answerBtn.classList.remove("hidden");
+        answerDisplay.classList.add("hidden");
+        answerText.innerText = selected.answer;
+
+        remainingQuestions.splice(randomIndex, 1);
+        totalAnswered++;
+        questionsLeft.innerText = remainingQuestions.length;
+        questionsAnswered.innerText = totalAnswered;
+      }, 5000);
+    }
+
+    spinBtn.addEventListener('click', spinWheel);
+    answerBtn.addEventListener('click', () => {
+      answerDisplay.classList.remove("hidden");
+    });
+
+    createWheel();
+  </script>
+</body>
+</html>
