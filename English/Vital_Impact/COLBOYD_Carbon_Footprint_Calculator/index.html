@@ -164,12 +164,19 @@
     <div class="pregunta" id="divProfesional" style="display:none;">
       <label>Profession:</label>
       <input type="text" id="profesion" name="profesion" placeholder="Example: Engineer, Teacher, etc" />
+      <label></label>
+      <label>Organization (or None):</label>
+      <input type="text" id="organizacion" placeholder="Example: Company X or None" />
     </div>
     <div class="pregunta" id="divEstudiante" style="display:none;">
       <label>Grade:</label>
       <input type="text" id="grado" name="grado" placeholder="Example: 10" />
       <label>Group:</label>
+      <label></label>
       <input type="text" id="grupo" name="grupo" placeholder="Example: 01" />
+      <label></label>
+      <label>Educational institution:</label>
+      <input type="text" id="institucion" placeholder="Example: XYZ School" />
     </div>
     <div class="pregunta">
       <label>How many days a week do you use car?</label>
@@ -215,7 +222,7 @@
   <div id="toast" class="toast"></div>
 
   <script>
-    function showToast(msg, success = true) {
+function showToast(msg, success = true) {
       const toast = document.getElementById("toast");
       toast.textContent = msg;
       toast.className = `toast show ${success ? "success" : "error"}`;
@@ -229,12 +236,28 @@
     }
 
     function prepararYEnviar() {
+
       const tipo = document.getElementById("tipoUsuario").value.trim();
       const nombre = document.getElementById("nombre").value.trim();
-      if (!nombre) { showToast("Enter your full name", false); return false; }
+
       if (!tipo) { showToast("Select student or professional", false); return false; }
-      if (tipo === "profesional" && !document.getElementById("profesion").value.trim()) { showToast("Enter your profession", false); return false; }
-      if (tipo === "estudiante" && (!document.getElementById("grado").value.trim() || !document.getElementById("grupo").value.trim())) { showToast("Enter grade and group", false); return false; }
+      if (!nombre) { showToast("Enter your full name", false); return false; }
+
+      if (tipo === "profesional") {
+        if (!document.getElementById("profesion").value.trim()) { showToast("Enter your profession", false); return false; }
+        if (!document.getElementById("organizacion").value.trim()) { showToast("Enter organization or None", false); return false; }
+      }
+
+      if (tipo === "estudiante") {
+        if (!document.getElementById("grado").value.trim() || !document.getElementById("grupo").value.trim()) {
+          showToast("Enter grade and group", false);
+          return false;
+        }
+        if (!document.getElementById("institucion").value.trim()) {
+          showToast("Enter the educational institution", false);
+          return false;
+        }
+      }
 
       const carro = parseInt(document.getElementById("carro").value) || 0;
       const bus = parseInt(document.getElementById("bus").value) || 0;
@@ -242,31 +265,48 @@
       const luzRadio = document.querySelector('input[name="luzSeleccionada"]:checked');
       const reciclajeRadio = document.querySelector('input[name="reciclaje"]:checked');
       const carneRadio = document.querySelector('input[name="carne"]:checked');
-      if (!luzRadio || !reciclajeRadio || !carneRadio) { showToast("Select all options", false); return false; }
+
+      if (!luzRadio || !reciclajeRadio || !carneRadio) {
+        showToast("Select all options", false);
+        return false;
+      }
 
       const luzSeleccionada = parseInt(luzRadio.value);
       const reciclaje = parseInt(reciclajeRadio.value);
       const carne = parseInt(carneRadio.value);
+
       const emisionesCarro = 2.415 * 52;
       const emisionesBus = 10 * 0.15 * 52;
       const emisionesMoto = 15 * 0.046 * 52;
       const emisionesLuz = [0, 350, 700];
       const emisionesReciclaje = [0, 150, 300];
-      const totalKg = carro * emisionesCarro + bus * emisionesBus + moto * emisionesMoto + emisionesLuz[luzSeleccionada] + carne * 900 + emisionesReciclaje[reciclaje];
+
+      const totalKg =
+        carro * emisionesCarro +
+        bus * emisionesBus +
+        moto * emisionesMoto +
+        emisionesLuz[luzSeleccionada] +
+        carne * 900 +
+        emisionesReciclaje[reciclaje];
+
       const totalToneladas = totalKg / 1000;
       const media = 1.6;
+
       let mensaje = `${nombre}, your annual carbon footprint is ${totalToneladas.toFixed(2)} tons of CO₂.\n\n`;
-      if (totalToneladas < media) mensaje += "You are below the Colombian average (1.6 tons per person)! Well done for taking care of the planet.";
-      else if (totalToneladas > media) mensaje += "You are above the average for Colombia (1.6 tons per person). You can improve with small changes.";
-      else mensaje += "You are right on the average for Colombia (1.6 tons per person).";
+      if (totalToneladas < media) mensaje += "You are below the Colombian average (1.6 t). Keep it up.";
+      else if (totalToneladas > media) mensaje += "You are above the average for Colombia (1.6 t). Try to reduce your carbon footprint.";
+      else mensaje += "You are right on par with the Colombian average (1.6 t). You are on the right track.";
+
       document.getElementById("resultado").textContent = mensaje;
 
       const data = {
         tipoUsuario: tipo,
         nombre: nombre,
         profesion: document.getElementById("profesion").value.trim(),
+        organizacion: document.getElementById("organizacion").value.trim(),
         grado: document.getElementById("grado").value.trim(),
         grupo: document.getElementById("grupo").value.trim(),
+        institucion: document.getElementById("institucion").value.trim(),
         carro, bus, moto, reciclaje, luzSeleccionada, carne,
         resultado: totalToneladas.toFixed(2)
       };
@@ -285,15 +325,11 @@
       return false;
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll(".acordeon").forEach((acordeon) => {
-        const titulo = acordeon.querySelector(".acordeon-titulo");
-        titulo.addEventListener("click", () => {
-          document.querySelectorAll(".acordeon").forEach((otro) => {
-            if (otro !== acordeon) otro.classList.remove("activo");
-          });
-          acordeon.classList.toggle("activo");
-        });
+    document.querySelectorAll(".acordeon").forEach((acordeon) => {
+      const titulo = acordeon.querySelector(".acordeon-titulo");
+      titulo.addEventListener("click", () => {
+        document.querySelectorAll(".acordeon").forEach((otro) => { if (otro !== acordeon) otro.classList.remove("activo"); });
+        acordeon.classList.toggle("activo");
       });
     });
   </script>
