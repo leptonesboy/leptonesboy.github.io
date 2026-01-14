@@ -298,7 +298,7 @@
       const reciclajeRadio = document.querySelector('input[name="reciclaje"]:checked');
       const carneRadio = document.querySelector('input[name="carne"]:checked');
 
-      if (!aguaRadio || gasRadio || luzRadio || !reciclajeRadio || !carneRadio) {
+      if (!aguaRadio || !gasRadio || !luzRadio || !reciclajeRadio || !carneRadio) {
         showToast("Selecciona todas las opciones", false);
         return false;
       }
@@ -345,7 +345,7 @@
         grado: document.getElementById("grado").value.trim(),
         grupo: document.getElementById("grupo").value.trim(),
         institucion: document.getElementById("institucion").value.trim(),
-        carro, bus, moto, reciclaje, luzSeleccionada, carne, agua, gas
+        carro, bus, moto, reciclaje, luzSeleccionada, carne, agua, gas,
         resultado: totalToneladas.toFixed(2)
       };
 
