@@ -199,6 +199,24 @@
     </div>
 
     <div class="pregunta">
+      <label>¿Cierras bien las llaves de agua cuando no las usas?</label>
+      <div class="opciones verticales">
+        <label><input type="radio" name="agua" value="0"> Siempre</label>
+        <label><input type="radio" name="agua" value="1"> Algunas veces</label>
+        <label><input type="radio" name="agua" value="2"> Nunca</label>
+      </div>
+    </div>
+
+    <div class="pregunta">
+      <label>¿Cierras bien la llave de gas cuando no la estás usando?</label>
+      <div class="opciones verticales">
+        <label><input type="radio" name="gas" value="0"> Siempre</label>
+        <label><input type="radio" name="gas" value="1"> Algunas veces</label>
+        <label><input type="radio" name="gas" value="2"> Nunca</label>
+      </div>
+    </div>
+
+    <div class="pregunta">
       <label>¿Reciclas en casa?</label>
       <div class="opciones verticales">
         <label><input type="radio" name="reciclaje" value="0"> Siempre</label>
@@ -274,15 +292,19 @@
       const carro = parseInt(document.getElementById("carro").value) || 0;
       const bus = parseInt(document.getElementById("bus").value) || 0;
       const moto = parseInt(document.getElementById("moto").value) || 0;
+      const aguaRadio = document.querySelector('input[name="agua"]:checked');
+      const gasRadio = document.querySelector('input[name="gas"]:checked');
       const luzRadio = document.querySelector('input[name="luzSeleccionada"]:checked');
       const reciclajeRadio = document.querySelector('input[name="reciclaje"]:checked');
       const carneRadio = document.querySelector('input[name="carne"]:checked');
 
-      if (!luzRadio || !reciclajeRadio || !carneRadio) {
+      if (!aguaRadio || gasRadio || luzRadio || !reciclajeRadio || !carneRadio) {
         showToast("Selecciona todas las opciones", false);
         return false;
       }
 
+      const agua = parseInt(aguaRadio.value);
+      const gas = parseInt(gasRadio.value);
       const luzSeleccionada = parseInt(luzRadio.value);
       const reciclaje = parseInt(reciclajeRadio.value);
       const carne = parseInt(carneRadio.value);
@@ -290,6 +312,8 @@
       const emisionesCarro = 2.415 * 52;
       const emisionesBus = 10 * 0.15 * 52;
       const emisionesMoto = 15 * 0.046 * 52;
+      const emisionesAgua = [0, 5.25, 10.5];
+      const emisionesGas = [0, 6.4, 12.8];
       const emisionesLuz = [0, 350, 700];
       const emisionesReciclaje = [0, 150, 300];
 
@@ -297,6 +321,8 @@
         carro * emisionesCarro +
         bus * emisionesBus +
         moto * emisionesMoto +
+        emisionesAgua[agua] +
+        emisionesGas[gas] +
         emisionesLuz[luzSeleccionada] +
         carne * 900 +
         emisionesReciclaje[reciclaje];
@@ -319,7 +345,7 @@
         grado: document.getElementById("grado").value.trim(),
         grupo: document.getElementById("grupo").value.trim(),
         institucion: document.getElementById("institucion").value.trim(),
-        carro, bus, moto, reciclaje, luzSeleccionada, carne,
+        carro, bus, moto, reciclaje, luzSeleccionada, carne, agua, gas
         resultado: totalToneladas.toFixed(2)
       };
 
