@@ -164,13 +164,13 @@
 
   <div class="info-version">
         <div class="izquierda">
-            <strong>Fecha de versión:</strong> 03/06/2026
+            <strong>Fecha de versión:</strong> 05/06/2026
         </div>
         <div class="centro">
-            <strong>Hora de versión:</strong> 05:14 p.m.
+            <strong>Hora de versión:</strong> 09:14 a.m.
         </div>
         <div class="derecha">
-            <strong>Número de versión:</strong> v2.0.015.13vfin08
+            <strong>Número de versión:</strong> v2.1.468.34vfin48
         </div>
   </div>
 
@@ -180,7 +180,7 @@
       <source src="https://leptonesboy.github.io/video_inicio.mp4" type="video/mp4">
       Tu navegador no soporta el video.
     </video>
-    <p style="font-size: 12px; text-align: center; margin-top: 10px;">Tomado de: [https://www.youtube.com/watch?v=nQ1pPLb1Fc4](https://www.youtube.com/watch?v=nQ1pPLb1Fc4)</p>
+    <p style="font-size: 12px; text-align: center; margin-top: 10px;">Tomado de: <a href="https://www.youtube.com/watch?v=nQ1pPLb1Fc4" target="_blank">https://www.youtube.com/watch?v=nQ1pPLb1Fc4</a></p>
     
     <h3 style="margin-top: 30px;">Bienvenidos</h3>
     <button type="button" onclick="empezarEncuesta()" style="background-color: #32ff7e; color: black; font-weight: bold; width: 200px; display: block; margin: 20px auto 0 auto;">Empezar</button>
@@ -261,38 +261,25 @@
       </div>
 
       <div class="pregunta">
-        <label>¿Cierras bien las llaves de agua cuando no las usas?</label>
-        <div class="opciones verticales">
-          <label><input type="radio" name="agua" value="0"> Siempre</label>
-          <label><input type="radio" name="agua" value="1"> Algunas veces</label>
-          <label><input type="radio" name="agua" value="2"> Nunca</label>
-        </div>
+        <label>Consumo mensual de agua (en m³):</label>
+        <input type="number" id="agua" min="0" step="any" placeholder="Ej: 15" />
       </div>
 
       <div class="pregunta">
-        <label>¿Cierras bien la llave de gas cuando no la estás usando?</label>
-        <div class="opciones verticales">
-          <label><input type="radio" name="gas" value="0"> Siempre</label>
-          <label><input type="radio" name="gas" value="1"> Algunas veces</label>
-          <label><input type="radio" name="gas" value="2"> Nunca</label>
-        </div>
+        <label>Consumo mensual de gas (en m³):</label>
+        <input type="number" id="gas" min="0" step="any" placeholder="Ej: 20" />
       </div>
 
+      <div class="pregunta">
+        <label>Consumo mensual de energía eléctrica (en kWh):</label>
+        <input type="number" id="luz" min="0" step="any" placeholder="Ej: 120" />
+      </div>
       <div class="pregunta">
         <label>¿Reciclas en casa?</label>
         <div class="opciones verticales">
           <label><input type="radio" name="reciclaje" value="0"> Siempre</label>
           <label><input type="radio" name="reciclaje" value="1"> Algunas veces</label>
           <label><input type="radio" name="reciclaje" value="2"> Nunca</label>
-        </div>
-      </div>
-
-      <div class="pregunta">
-        <label>¿Apagas las luces cuando no las usas?</label>
-        <div class="opciones verticales">
-          <label><input type="radio" name="luzSeleccionada" value="0"> Siempre</label>
-          <label><input type="radio" name="luzSeleccionada" value="1"> Algunas veces</label>
-          <label><input type="radio" name="luzSeleccionada" value="2"> Nunca</label>
         </div>
       </div>
 
@@ -374,39 +361,44 @@
       const bus = parseInt(document.getElementById("bus").value) || 0;
       const moto = parseInt(document.getElementById("moto").value) || 0;
 
-      const aguaRadio = document.querySelector('input[name="agua"]:checked');
-      const gasRadio = document.querySelector('input[name="gas"]:checked');
-      const luzRadio = document.querySelector('input[name="luzSeleccionada"]:checked');
+      // Lectura de los nuevos inputs numéricos
+      const aguaInput = document.getElementById("agua").value;
+      const gasInput = document.getElementById("gas").value;
+      const luzInput = document.getElementById("luz").value;
+
       const reciclajeRadio = document.querySelector('input[name="reciclaje"]:checked');
       const carneRadio = document.querySelector('input[name="carne"]:checked');
 
-      if (!aguaRadio || !gasRadio || !luzRadio || !reciclajeRadio || !carneRadio) {
-        showToast("Selecciona todas las opciones", false);
+      if (aguaInput === "" || gasInput === "" || luzInput === "" || !reciclajeRadio || !carneRadio) {
+        showToast("Selecciona y llena todas las opciones", false);
         return false;
       }
 
-      const agua = parseInt(aguaRadio.value);
-      const gas = parseInt(gasRadio.value);
-      const luzSeleccionada = parseInt(luzRadio.value);
+      const agua = parseFloat(aguaInput) || 0;
+      const gas = parseFloat(gasInput) || 0;
+      const luz = parseFloat(luzInput) || 0;
       const reciclaje = parseInt(reciclajeRadio.value);
       const carne = parseInt(carneRadio.value);
 
+      // Emisiones de transporte
       const emisionesCarro = 2.415 * 52;
       const emisionesBus = 10 * 0.15 * 52;
       const emisionesMoto = 15 * 0.046 * 52;
 
-      const emisionesAgua = [0, 5.25, 10.5];
-      const emisionesGas = [0, 6.4, 12.8];
-      const emisionesLuz = [0, 350, 700];
+      // Nuevas Emisiones (Factores estándar Colombia x 12 meses para anualizar el mensual)
+      const emisionesAguaCalc = agua * 0.344 * 12; // Aprox 0.344 kg CO2 por m3 de agua procesada
+      const emisionesGasCalc = gas * 2.02 * 12;    // Aprox 2.02 kg CO2 por m3 de gas natural
+      const emisionesLuzCalc = luz * 0.164 * 12;   // Aprox 0.164 kg CO2 por kWh de electricidad en Colombia
+      
       const emisionesReciclaje = [0, 150, 300];
 
       const totalKg =
         carro * emisionesCarro +
         bus * emisionesBus +
         moto * emisionesMoto +
-        emisionesAgua[agua] +
-        emisionesGas[gas] +
-        emisionesLuz[luzSeleccionada] +
+        emisionesAguaCalc +
+        emisionesGasCalc +
+        emisionesLuzCalc +
         carne * 900 +
         emisionesReciclaje[reciclaje];
 
@@ -439,7 +431,7 @@
         bus,
         moto,
         reciclaje,
-        luzSeleccionada,
+        luzSeleccionada: luz, // Se envía así para que tu base de datos actual lo reciba igual
         carne,
         agua,
         gas,
