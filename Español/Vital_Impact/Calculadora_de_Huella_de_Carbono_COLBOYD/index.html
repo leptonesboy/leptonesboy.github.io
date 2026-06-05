@@ -6,13 +6,21 @@
   <link rel="icon" href="https://calculadorahuellacarbono.github.io/favicon_vi.png" type="image/png">
   <style>
     body {
-      background-color: #FFFFFF;
+      background-color: #f4f4f4;
       font-family: 'Comic Sans MS', sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .apartado {
+      background-color: #FFFFFF;
       max-width: 800px;
-      margin: auto;
+      margin: 0 auto 30px auto;
       padding: 20px;
       border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     }
+
     h1, h3 { text-align: center; color: #000000; }
     h4 { font-weight: normal; text-align: left; font-family: Arial, Helvetica, sans-serif; }
     .pregunta {
@@ -121,7 +129,8 @@
     }
     .toast.success { background-color: #4CAF50; }
     .toast.error { background-color: #f44336; }
-        .info-version {
+    
+    .info-version {
         display: flex;
         justify-content: space-between;
         text-align: center;
@@ -129,152 +138,195 @@
         color: #333;
         font-family: Arial, Helvetica, sans-serif;
         margin-bottom: 15px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
     }
     .izquierda {text-align: left; width: 33%; font-family: Arial, Helvetica, sans-serif;}
     .centro {text-align: center; width: 33%; font-family: Arial, Helvetica, sans-serif;}
     .derecha {text-align: right; width: 33%; font-family: Arial, Helvetica, sans-serif;}
+
+    /* Caja especial para el texto generado por la IA local */
+    #texto-consejos-ia {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      background-color: #f0fdf4;
+      border-left: 5px solid #388e3c;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 20px;
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 <body>
 
   <div class="info-version">
         <div class="izquierda">
-            <strong>Fecha de versión:</strong> 16/01/2026
+            <strong>Fecha de versión:</strong> 03/06/2026
         </div>
         <div class="centro">
-            <strong>Hora de versión:</strong> 08:32 a.m.
+            <strong>Hora de versión:</strong> 05:14 p.m.
         </div>
         <div class="derecha">
-            <strong>Número de versión:</strong> v2.0.015.13vfin03
+            <strong>Número de versión:</strong> v2.0.015.13vfin08
         </div>
-    </div>
-
-  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 20px;">
-    <div style="flex: 1; display: flex; justify-content: flex-start;">
-      <img src="https://calculadorahuellacarbono.github.io/favicon_CBD.jpg" alt="Logo COLBOYD" style="width: 120px; height: auto;" />
-    </div>
-    <div style="flex: 1; display: flex; justify-content: center; align-items: center; gap: 20px;">
-      <img src="https://calculadorahuellacarbono.github.io/favicon_LB.jpg" alt="Logo Leptones BOY" style="width: 100px; height: auto;" />
-      <img src="https://calculadorahuellacarbono.github.io/favicon_vi.png" alt="Logo Vital Impact" style="width: 150px; height: auto;" />
-    </div>
-    <div style="flex: 1; display: flex; justify-content: flex-end;">
-      <img src="https://calculadorahuellacarbono.github.io/favicon_ME.png" alt="Logo MinEducación" style="width: 170px; height: auto;" />
-    </div>
   </div>
 
-  <h1>Mi Huella de Carbono COLBOYD</h1>
-  <h3>"Transforma tu huella, transforma el planeta"</h3>
-
-  <div class="acordeon">
-    <div class="acordeon-titulo">¿Sabes qué es la Huella de Carbono?</div>
-    <div class="acordeon-contenido">
-      <p>Las emisiones de CO₂ que produces al año son una de las grandes variables en el aumento del calentamiento global, ya que contribuyen al efecto invernadero y aceleran los cambios en el clima.</p>
-      <p>Podemos disminuir nuestra huella de carbono apagando las luces cuando no las usamos, reciclando, usando bicicleta o transporte público, y consumiendo menos carne.</p>
-    </div>
+  <div class="apartado" id="seccion-inicio">
+    <h2 style="text-align:center;">Footprint Boy</h2>
+    <video id="videoInicio" controls style="width: 100%; border-radius: 10px; max-width: 600px; display: block; margin: 0 auto;">
+      <source src="https://leptonesboy.github.io/video_inicio.mp4" type="video/mp4">
+      Tu navegador no soporta el video.
+    </video>
+    <p style="font-size: 12px; text-align: center; margin-top: 10px;">Tomado de: [https://www.youtube.com/watch?v=nQ1pPLb1Fc4](https://www.youtube.com/watch?v=nQ1pPLb1Fc4)</p>
+    
+    <h3 style="margin-top: 30px;">Bienvenidos</h3>
+    <button type="button" onclick="empezarEncuesta()" style="background-color: #32ff7e; color: black; font-weight: bold; width: 200px; display: block; margin: 20px auto 0 auto;">Empezar</button>
   </div>
 
-  <form id="formCalc" onsubmit="return prepararYEnviar();">
-    <div class="pregunta">
-      <label>Nombre completo:</label>
-      <input type="text" id="nombre" />
-    </div>
-
-    <div class="pregunta">
-      <label>¿Eres estudiante o profesional?</label>
-      <select id="tipoUsuario" onchange="cambiarTipo()">
-        <option value="">-Seleccione Uno-</option>
-        <option value="profesional">Profesional</option>
-        <option value="estudiante">Estudiante</option>
-      </select>
-    </div>
-
-    <div class="pregunta" id="divProfesional" style="display:none;">
-      <label>Profesión:</label>
-      <input type="text" id="profesion" placeholder="Ejemplo: Ingeniero, Profesor" />
-      <label></label>
-      <label>Organización (o Ninguna):</label>
-      <input type="text" id="organizacion" placeholder="Ejemplo: Empresa X o Ninguna" />
-    </div>
-
-    <div class="pregunta" id="divEstudiante" style="display:none;">
-      <label>Grado:</label>
-      <input type="text" id="grado" placeholder="Ejemplo: 10" />
-      <label></label>
-      <label>Grupo:</label>
-      <input type="text" id="grupo" placeholder="01" />
-      <label></label>
-      <label>Institución educativa:</label>
-      <input type="text" id="institucion" placeholder="Ejemplo: Colegio XYZ" />
-    </div>
-
-    <div class="pregunta">
-      <label>¿Cuántos días a la semana usas carro?</label>
-      <input type="number" id="carro" min="0" max="7" />
-    </div>
-
-    <div class="pregunta">
-      <label>¿Cuántos días a la semana usas bus?</label>
-      <input type="number" id="bus" min="0" max="7" />
-    </div>
-
-    <div class="pregunta">
-      <label>¿Cuántos días a la semana usas moto?</label>
-      <input type="number" id="moto" min="0" max="7" />
-    </div>
-
-    <div class="pregunta">
-      <label>¿Cierras bien las llaves de agua cuando no las usas?</label>
-      <div class="opciones verticales">
-        <label><input type="radio" name="agua" value="0"> Siempre</label>
-        <label><input type="radio" name="agua" value="1"> Algunas veces</label>
-        <label><input type="radio" name="agua" value="2"> Nunca</label>
+  <div class="apartado" id="seccion-encuesta" style="display: none;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 20px;">
+      <div style="flex: 1; display: flex; justify-content: flex-start;">
+        <img src="https://calculadorahuellacarbono.github.io/favicon_CBD.jpg" alt="Logo COLBOYD" style="width: 120px; height: auto;" />
+      </div>
+      <div style="flex: 1; display: flex; justify-content: center; align-items: center; gap: 20px;">
+        <img src="https://calculadorahuellacarbono.github.io/favicon_LB.jpg" alt="Logo Leptones BOY" style="width: 100px; height: auto;" />
+        <img src="https://calculadorahuellacarbono.github.io/favicon_vi.png" alt="Logo Vital Impact" style="width: 150px; height: auto;" />
+      </div>
+      <div style="flex: 1; display: flex; justify-content: flex-end;">
+        <img src="https://calculadorahuellacarbono.github.io/favicon_ME.png" alt="Logo MinEducación" style="width: 170px; height: auto;" />
       </div>
     </div>
 
-    <div class="pregunta">
-      <label>¿Cierras bien la llave de gas cuando no la estás usando?</label>
-      <div class="opciones verticales">
-        <label><input type="radio" name="gas" value="0"> Siempre</label>
-        <label><input type="radio" name="gas" value="1"> Algunas veces</label>
-        <label><input type="radio" name="gas" value="2"> Nunca</label>
+    <h1>Mi Huella de Carbono COLBOYD</h1>
+    <h3>"Transforma tu huella, transforma el planeta"</h3>
+
+    <div class="acordeon">
+      <div class="acordeon-titulo">¿Sabes qué es la Huella de Carbono?</div>
+      <div class="acordeon-contenido">
+        <p>Las emisiones de CO₂ que produces al año son una de las grandes variables en el aumento del calentamiento global, ya que contribuyen al efecto invernadero y aceleran los cambios en el clima.</p>
+        <p>Podemos disminuir nuestra huella de carbono apagando las luces cuando no las usamos, reciclando, usando bicicleta o transporte público, y consumiendo menos carne.</p>
       </div>
     </div>
 
-    <div class="pregunta">
-      <label>¿Reciclas en casa?</label>
-      <div class="opciones verticales">
-        <label><input type="radio" name="reciclaje" value="0"> Siempre</label>
-        <label><input type="radio" name="reciclaje" value="1"> Algunas veces</label>
-        <label><input type="radio" name="reciclaje" value="2"> Nunca</label>
+    <form id="formCalc" onsubmit="return prepararYEnviar();">
+      <div class="pregunta">
+        <label>Nombre completo:</label>
+        <input type="text" id="nombre" />
       </div>
-    </div>
 
-    <div class="pregunta">
-      <label>¿Apagas las luces cuando no las usas?</label>
-      <div class="opciones verticales">
-        <label><input type="radio" name="luzSeleccionada" value="0"> Siempre</label>
-        <label><input type="radio" name="luzSeleccionada" value="1"> Algunas veces</label>
-        <label><input type="radio" name="luzSeleccionada" value="2"> Nunca</label>
+      <div class="pregunta">
+        <label>¿Eres estudiante o profesional?</label>
+        <select id="tipoUsuario" onchange="cambiarTipo()">
+          <option value="">-Seleccione Uno-</option>
+          <option value="profesional">Profesional</option>
+          <option value="estudiante">Estudiante</option>
+        </select>
       </div>
-    </div>
 
-    <div class="pregunta">
-      <label>¿Consumes carne todos los días?</label>
-      <div class="opciones verticales">
-        <label><input type="radio" name="carne" value="2"> Siempre</label>
-        <label><input type="radio" name="carne" value="1"> Algunas veces</label>
-        <label><input type="radio" name="carne" value="0"> Nunca</label>
+      <div class="pregunta" id="divProfesional" style="display:none;">
+        <label>Profesión:</label>
+        <input type="text" id="profesion" placeholder="Ejemplo: Ingeniero, Profesor" />
+        <label></label>
+        <label>Organización (o Ninguna):</label>
+        <input type="text" id="organizacion" placeholder="Ejemplo: Empresa X o Ninguna" />
       </div>
-    </div>
 
-    <button type="submit">Calcular y enviar</button>
-  </form>
+      <div class="pregunta" id="divEstudiante" style="display:none;">
+        <label>Grado:</label>
+        <input type="text" id="grado" placeholder="Ejemplo: 10" />
+        <label></label>
+        <label>Grupo:</label>
+        <input type="text" id="grupo" placeholder="01" />
+        <label></label>
+        <label>Institución educativa:</label>
+        <input type="text" id="institucion" placeholder="Ejemplo: Colegio XYZ" />
+      </div>
 
-  <div id="resultado"></div>
+      <div class="pregunta">
+        <label>¿Cuántos días a la semana usas carro?</label>
+        <input type="number" id="carro" min="0" max="7" />
+      </div>
+
+      <div class="pregunta">
+        <label>¿Cuántos días a la semana usas bus?</label>
+        <input type="number" id="bus" min="0" max="7" />
+      </div>
+
+      <div class="pregunta">
+        <label>¿Cuántos días a la semana usas moto?</label>
+        <input type="number" id="moto" min="0" max="7" />
+      </div>
+
+      <div class="pregunta">
+        <label>¿Cierras bien las llaves de agua cuando no las usas?</label>
+        <div class="opciones verticales">
+          <label><input type="radio" name="agua" value="0"> Siempre</label>
+          <label><input type="radio" name="agua" value="1"> Algunas veces</label>
+          <label><input type="radio" name="agua" value="2"> Nunca</label>
+        </div>
+      </div>
+
+      <div class="pregunta">
+        <label>¿Cierras bien la llave de gas cuando no la estás usando?</label>
+        <div class="opciones verticales">
+          <label><input type="radio" name="gas" value="0"> Siempre</label>
+          <label><input type="radio" name="gas" value="1"> Algunas veces</label>
+          <label><input type="radio" name="gas" value="2"> Nunca</label>
+        </div>
+      </div>
+
+      <div class="pregunta">
+        <label>¿Reciclas en casa?</label>
+        <div class="opciones verticales">
+          <label><input type="radio" name="reciclaje" value="0"> Siempre</label>
+          <label><input type="radio" name="reciclaje" value="1"> Algunas veces</label>
+          <label><input type="radio" name="reciclaje" value="2"> Nunca</label>
+        </div>
+      </div>
+
+      <div class="pregunta">
+        <label>¿Apagas las luces cuando no las usas?</label>
+        <div class="opciones verticales">
+          <label><input type="radio" name="luzSeleccionada" value="0"> Siempre</label>
+          <label><input type="radio" name="luzSeleccionada" value="1"> Algunas veces</label>
+          <label><input type="radio" name="luzSeleccionada" value="2"> Nunca</label>
+        </div>
+      </div>
+
+      <div class="pregunta">
+        <label>¿Consumes carne todos los días?</label>
+        <div class="opciones verticales">
+          <label><input type="radio" name="carne" value="2"> Siempre</label>
+          <label><input type="radio" name="carne" value="1"> Algunas veces</label>
+          <label><input type="radio" name="carne" value="0"> Nunca</label>
+        </div>
+      </div>
+
+      <button type="submit">Calcular y enviar</button>
+    </form>
+
+    <div id="resultado" style="display: none;"></div>
+  </div>
+
+  <div class="apartado" id="seccion-consejos" style="display: none;">
+    <h3>Consejos personalizados:</h3>
+    <div id="texto-consejos-ia"></div>
+  </div>
 
   <div id="toast" class="toast"></div>
 
   <script>
+    function empezarEncuesta() {
+      const video = document.getElementById("videoInicio");
+      if (video) { video.pause(); }
+
+      document.getElementById("seccion-inicio").style.display = "none"; 
+      document.getElementById("seccion-encuesta").style.display = "block"; 
+      window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    }
 
     function showToast(msg, success = true) {
       const toast = document.getElementById("toast");
@@ -290,7 +342,6 @@
     }
 
     function prepararYEnviar() {
-
       const tipo = document.getElementById("tipoUsuario").value.trim();
       const nombre = document.getElementById("nombre").value.trim();
 
@@ -298,8 +349,14 @@
       if (!nombre) { showToast("Ingresa tu nombre completo", false); return false; }
 
       if (tipo === "profesional") {
-        if (!document.getElementById("profesion").value.trim()) { showToast("Ingresa tu profesión", false); return false; }
-        if (!document.getElementById("organizacion").value.trim()) { showToast("Ingresa organización o Ninguna", false); return false; }
+        if (!document.getElementById("profesion").value.trim()) {
+          showToast("Ingresa tu profesión", false);
+          return false;
+        }
+        if (!document.getElementById("organizacion").value.trim()) {
+          showToast("Ingresa organización o Ninguna", false);
+          return false;
+        }
       }
 
       if (tipo === "estudiante") {
@@ -316,6 +373,7 @@
       const carro = parseInt(document.getElementById("carro").value) || 0;
       const bus = parseInt(document.getElementById("bus").value) || 0;
       const moto = parseInt(document.getElementById("moto").value) || 0;
+
       const aguaRadio = document.querySelector('input[name="agua"]:checked');
       const gasRadio = document.querySelector('input[name="gas"]:checked');
       const luzRadio = document.querySelector('input[name="luzSeleccionada"]:checked');
@@ -336,6 +394,7 @@
       const emisionesCarro = 2.415 * 52;
       const emisionesBus = 10 * 0.15 * 52;
       const emisionesMoto = 15 * 0.046 * 52;
+
       const emisionesAgua = [0, 5.25, 10.5];
       const emisionesGas = [0, 6.4, 12.8];
       const emisionesLuz = [0, 350, 700];
@@ -355,11 +414,18 @@
       const media = 1.6;
 
       let mensaje = `${nombre}, tu huella de carbono anual es de ${totalToneladas.toFixed(2)} toneladas de CO₂.\n\n`;
-      if (totalToneladas < media) mensaje += "Estás por debajo del promedio de Colombia (1,6 t) Sigue así.";
-      else if (totalToneladas > media) mensaje += "Estás por encima del promedio de Colombia (1,6 t) Intenta reducir tu huella de carbono.";
-      else mensaje += "Estás justo en el promedio de Colombia (1,6 t). Vas por buen camino";
 
-      document.getElementById("resultado").textContent = mensaje;
+      if (totalToneladas < media) {
+        mensaje += "Estás por debajo del promedio de Colombia (1,6 t). Sigue así.";
+      } else if (totalToneladas > media) {
+        mensaje += "Estás por encima del promedio de Colombia (1,6 t). Intenta reducir tu huella de carbono.";
+      } else {
+        mensaje += "Estás justo en el promedio de Colombia (1,6 t). Vas por buen camino.";
+      }
+
+      const divResultado = document.getElementById("resultado");
+      divResultado.textContent = mensaje;
+      divResultado.style.display = "block";
 
       const data = {
         tipoUsuario: tipo,
@@ -369,24 +435,50 @@
         grado: document.getElementById("grado").value.trim(),
         grupo: document.getElementById("grupo").value.trim(),
         institucion: document.getElementById("institucion").value.trim(),
-        carro, bus, moto, reciclaje, luzSeleccionada, carne, agua, gas,
+        carro,
+        bus,
+        moto,
+        reciclaje,
+        luzSeleccionada,
+        carne,
+        agua,
+        gas,
         resultado: totalToneladas.toFixed(2)
       };
 
       const url = "https://script.google.com/macros/s/AKfycbwivUYh3OqfdKLWUuKHBD6YeoIgSBJI07BY8U-XlHk2D997kfEoi8vUOee2zQ2UpKif/exec";
 
+      document.getElementById("seccion-consejos").style.display = "block";
+      document.getElementById("texto-consejos-ia").textContent = "🤖 Generando consejo personalizado con IA...";
+
       fetch(url, {
         method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
         body: JSON.stringify(data)
       })
-      .then(() => showToast("¡Datos enviados correctamente!"))
-      .catch(() => showToast("Error al enviar los datos", false));
+      .then(response => response.json())
+      .then(resultado => {
+        showToast("¡Datos enviados correctamente!");
+
+        if (resultado.status === "ok") {
+          document.getElementById("texto-consejos-ia").textContent = resultado.consejo;
+        } else {
+          document.getElementById("texto-consejos-ia").textContent = "No fue posible generar el consejo personalizado.";
+        }
+
+        document.getElementById("seccion-consejos").scrollIntoView({ behavior: "smooth" });
+      })
+      .catch(error => {
+        console.error(error);
+        document.getElementById("texto-consejos-ia").textContent = "Error al conectar con la IA.";
+        showToast("Error al enviar los datos", false);
+      });
 
       return false;
     }
-
+    
     document.querySelectorAll(".acordeon").forEach((acordeon) => {
       const titulo = acordeon.querySelector(".acordeon-titulo");
       titulo.addEventListener("click", () => {
@@ -394,7 +486,6 @@
         acordeon.classList.toggle("activo");
       });
     });
-
   </script>
 </body>
 </html>
