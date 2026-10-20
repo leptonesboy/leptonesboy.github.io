@@ -30,6 +30,7 @@
       margin-top: 20px;
     }
     label { font-size: 18px; margin-bottom: 10px; display: block; }
+    .pregunta small { display: block; margin-top: 8px; font-size: 13px; line-height: 1.4; font-family: Arial, Helvetica, sans-serif; }
     input[type="text"], input[type="number"], select {
       font-size: 16px;
       padding: 8px;
@@ -206,7 +207,7 @@
     <div class="acordeon">
       <div class="acordeon-titulo">¿Sabes qué es la Huella de Carbono?</div>
       <div class="acordeon-contenido">
-        <p>Las emisiones de CO₂ que produces al año son una de las grandes variables en el aumento del calentamiento global, ya que contribuyen al efecto invernadero y aceleran los cambios en el clima.</p>
+        <p>Las emisiones de CO₂ que produces cada mes son una de las variables en el aumento del calentamiento global, ya que contribuyen al efecto invernadero y aceleran los cambios en el clima.</p>
         <p>Podemos disminuir nuestra huella de carbono apagando las luces cuando no las usamos, reciclando, usando bicicleta o transporte público, y consumiendo menos carne.</p>
       </div>
     </div>
@@ -261,18 +262,30 @@
       </div>
 
       <div class="pregunta">
-        <label>Consumo mensual de agua (en m³):</label>
-        <input type="number" id="agua" min="0" step="any" placeholder="Ej: 15" />
+        <label for="duchaMinutos">¿Cuánto dura normalmente tu ducha?</label>
+        <select id="duchaMinutos" required>
+          <option value="">Selecciona una opción</option>
+          <option value="3">Menos de 5 minutos</option>
+          <option value="7.5">Entre 5 y 10 minutos</option>
+          <option value="12.5">Más de 10 minutos</option>
+        </select>
       </div>
 
       <div class="pregunta">
-        <label>Consumo mensual de gas (en m³):</label>
-        <input type="number" id="gas" min="0" step="any" placeholder="Ej: 20" />
+        <label for="lucesHorasVacias">En un día normal, ¿cuántas horas quedan encendidas las luces en habitaciones vacías?</label>
+        <input type="number" id="lucesHorasVacias" min="0" max="24" step="0.5" required placeholder="Ejemplo: 2" />
+        <small>Si no ocurre, escribe 0.</small>
       </div>
 
       <div class="pregunta">
-        <label>Consumo mensual de energía eléctrica (en kWh):</label>
-        <input type="number" id="luz" min="0" step="any" placeholder="Ej: 120" />
+        <label for="estufaHoras">¿Cuánto tiempo utilizas diariamente la estufa de gas en tu hogar?</label>
+        <select id="estufaHoras" required>
+          <option value="">Selecciona una opción</option>
+          <option value="0">No utilizamos estufa de gas</option>
+          <option value="0.25">Menos de 30 minutos</option>
+          <option value="0.75">Entre 30 minutos y 1 hora</option>
+          <option value="1.5">Más de 1 hora</option>
+        </select>
       </div>
       <div class="pregunta">
         <label>¿Reciclas en casa?</label>
@@ -329,24 +342,15 @@
     }
 
     function mostrarConsejos(texto) {
-        const contenedor = document.getElementById("texto-consejos-ia");
-
-        const escaparHTML = (texto) =>
-            texto.replace(/[&<>"']/g, (caracter) => ({
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
-                '"': "&quot;",
-                "'": "&#39;"
-            })[caracter]);
-
-        let html = escaparHTML(texto);
-
-        html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-
-        html = html.replace(/\n/g, "<br>");
-
-        contenedor.innerHTML = html;
+      const contenedor = document.getElementById("texto-consejos-ia");
+      const escaparHTML = (valor) => valor.replace(/[&<>"']/g, (caracter) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[caracter]);
+      let html = escaparHTML(String(texto || ""));
+      html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+      html = html.replace(/^[-*]\s+(.+)$/gm, "• $1");
+      html = html.replace(/\n/g, "<br>");
+      contenedor.innerHTML = html;
     }
 
     function prepararYEnviar() {
@@ -382,55 +386,82 @@
       const bus = parseInt(document.getElementById("bus").value) || 0;
       const moto = parseInt(document.getElementById("moto").value) || 0;
 
-      const aguaInput = document.getElementById("agua").value;
-      const gasInput = document.getElementById("gas").value;
-      const luzInput = document.getElementById("luz").value;
+      // Lectura de las preguntas de hábitos
+      const duchaInput = document.getElementById("duchaMinutos").value;
+      const lucesInput = document.getElementById("lucesHorasVacias").value;
+      const estufaInput = document.getElementById("estufaHoras").value;
 
       const reciclajeRadio = document.querySelector('input[name="reciclaje"]:checked');
       const carneRadio = document.querySelector('input[name="carne"]:checked');
 
-      if (aguaInput === "" || gasInput === "" || luzInput === "" || !reciclajeRadio || !carneRadio) {
-        showToast("Selecciona y llena todas las opciones", false);
+      if (carro < 0 || carro > 7 || bus < 0 || bus > 7 || moto < 0 || moto > 7) {
+        showToast("El transporte debe estar entre 0 y 7 días por semana", false);
+        return false;
+      }
+      if (duchaInput === "" || lucesInput === "" || estufaInput === "" || !reciclajeRadio || !carneRadio) {
+        showToast("Selecciona y completa todas las opciones", false);
         return false;
       }
 
-      const agua = parseFloat(aguaInput) || 0;
-      const gas = parseFloat(gasInput) || 0;
-      const luz = parseFloat(luzInput) || 0;
-      const reciclaje = parseInt(reciclajeRadio.value);
-      const carne = parseInt(carneRadio.value);
+      const duchaMinutos = parseFloat(duchaInput);
+      const lucesHorasVacias = parseFloat(lucesInput);
+      const estufaHoras = parseFloat(estufaInput);
+      const reciclaje = parseInt(reciclajeRadio.value, 10);
+      const carne = parseInt(carneRadio.value, 10);
 
-      const emisionesCarro = 2.415 * 4.3;
-      const emisionesBus = 10 * 0.15 * 4.3;
-      const emisionesMoto = 15 * 0.046 * 4.3;
+      if (!Number.isFinite(lucesHorasVacias) || lucesHorasVacias < 0 || lucesHorasVacias > 24) {
+        showToast("Las horas de luces encendidas deben estar entre 0 y 24", false);
+        return false;
+      }
 
-      const emisionesAguaCalc = agua * 0.344;
-      const emisionesGasCalc = gas * 2.02;
-      const emisionesLuzCalc = luz * 0.164;
-      
-      const emisionesReciclaje = [0, 12.5, 25];
+      // CONVERSIONES MENSUALES: factores aproximados para fines educativos.
+      const semanasPorMes = 52.14 / 12;
 
-      const totalKg =
+      // Transporte: se conservan los factores originales y los días/semana.
+      const emisionesCarro = 2.415 * semanasPorMes;
+      const emisionesBus = 10 * 0.15 * semanasPorMes;
+      const emisionesMoto = 15 * 0.046 * semanasPorMes;
+
+      // Ducha: 1 ducha diaria, 9 litros/minuto y 0,344 kg CO2/m³ de agua.
+      // Esto estima solo emisiones asociadas al agua; no incluye calentarla.
+      const aguaDuchaM3Mes = duchaMinutos * 9 * 30 / 1000;
+      const emisionesDuchaKg = aguaDuchaM3Mes * 0.344;
+
+      // Luces en habitaciones vacías: 3 bombillas LED de 9 W, 30 días/mes.
+      const consumoLucesKWhMes = lucesHorasVacias * 30 * 3 * 9 / 1000;
+      const emisionesLucesKg = consumoLucesKWhMes * 0.164;
+
+      // Estufa: supuesto de 0,12 m³ de gas/hora, 30 días/mes y 2,02 kg CO2/m³.
+      const consumoGasM3Mes = estufaHoras * 30 * 0.12;
+      const emisionesEstufaKg = consumoGasM3Mes * 2.02;
+
+      // Se conservan las opciones de respuesta. Los factores 150, 300 y 900
+      // se tratan como valores anuales y se dividen entre 12 para estimar el mes.
+      const emisionesReciclaje = [0, 150 / 12, 300 / 12];
+      const emisionesCarneKg = carne * 900 / 12;
+
+      const totalKgMes =
         carro * emisionesCarro +
         bus * emisionesBus +
         moto * emisionesMoto +
-        emisionesAguaCalc +
-        emisionesGasCalc +
-        emisionesLuzCalc +
-        carne * 75 +
+        emisionesDuchaKg +
+        emisionesLucesKg +
+        emisionesEstufaKg +
+        emisionesCarneKg +
         emisionesReciclaje[reciclaje];
 
-      const totalToneladas = totalKg;
-      const media = 133;
+      // Referencia mensual equivalente a 1,6 toneladas anuales.
+      const mediaMensualKg = 1600 / 12;
 
-      let mensaje = `${nombre}, tu huella de carbono mensual es de ${totalToneladas.toFixed(2)} Kilogramos de CO₂.\n\n`;
+      let mensaje = `${nombre}, tu huella de carbono estimada es de ${totalKgMes.toFixed(2)} kg de CO₂/mes.\n\n`;
+      mensaje += "Esta es una estimación educativa basada en los supuestos indicados en el formulario.\n\n";
 
-      if (totalToneladas < media) {
-        mensaje += "Estás por debajo del promedio de Colombia (133 kg). Sigue así.";
-      } else if (totalToneladas > media) {
-        mensaje += "Estás por encima del promedio de Colombia (133 kg). Intenta reducir tu huella de carbono.";
+      if (totalKgMes < mediaMensualKg) {
+        mensaje += "Estás por debajo del promedio mensual de referencia (133,33 kg de CO₂). Sigue así.";
+      } else if (totalKgMes > mediaMensualKg) {
+        mensaje += "Estás por encima del promedio mensual de referencia (133,33 kg de CO₂). Intenta reducir tu huella.";
       } else {
-        mensaje += "Estás justo en el promedio de Colombia (133 kg). Vas por buen camino.";
+        mensaje += "Estás en el promedio mensual de referencia (133,33 kg de CO₂).";
       }
 
       const divResultado = document.getElementById("resultado");
@@ -449,11 +480,15 @@
         bus,
         moto,
         reciclaje,
-        luzSeleccionada: luz,
         carne,
-        agua,
-        gas,
-        resultado: totalToneladas.toFixed(2)
+        duchaMinutos,
+        lucesHorasVacias,
+        estufaHoras,
+        emisionesDuchaKg: Number(emisionesDuchaKg.toFixed(4)),
+        emisionesLucesKg: Number(emisionesLucesKg.toFixed(4)),
+        emisionesEstufaKg: Number(emisionesEstufaKg.toFixed(4)),
+        resultado: totalKgMes.toFixed(2),
+        unidad: "kg CO2/mes"
       };
 
       const url = "https://script.google.com/macros/s/AKfycbwivUYh3OqfdKLWUuKHBD6YeoIgSBJI07BY8U-XlHk2D997kfEoi8vUOee2zQ2UpKif/exec";
@@ -470,19 +505,19 @@
       })
       .then(response => response.json())
       .then(resultado => {
-        showToast("¡Datos enviados correctamente!");
-
         if (resultado.status === "ok") {
-          document.getElementById("texto-consejos-ia").textContent = resultado.consejo;
+          showToast("¡Datos guardados correctamente!");
+          mostrarConsejos(resultado.consejo || "No se recibió un consejo.");
         } else {
-          document.getElementById("texto-consejos-ia").textContent = "No fue posible generar el consejo personalizado.";
+          showToast("Los datos no se pudieron procesar completamente", false);
+          document.getElementById("texto-consejos-ia").textContent = resultado.message || "No fue posible generar el consejo personalizado.";
         }
 
         document.getElementById("seccion-consejos").scrollIntoView({ behavior: "smooth" });
       })
       .catch(error => {
         console.error(error);
-        document.getElementById("texto-consejos-ia").textContent = "Error al conectar con la IA.";
+        document.getElementById("texto-consejos-ia").textContent = "Error al conectar con el servicio. Revisa la conexión e inténtalo de nuevo.";
         showToast("Error al enviar los datos", false);
       });
 
