@@ -328,6 +328,27 @@
       document.getElementById("divEstudiante").style.display = tipo === "estudiante" ? "block" : "none";
     }
 
+    function mostrarConsejos(texto) {
+        const contenedor = document.getElementById("texto-consejos-ia");
+
+        const escaparHTML = (texto) =>
+            texto.replace(/[&<>"']/g, (caracter) => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[caracter]);
+
+        let html = escaparHTML(texto);
+
+        html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+
+        html = html.replace(/\n/g, "<br>");
+
+        contenedor.innerHTML = html;
+    }
+
     function prepararYEnviar() {
       const tipo = document.getElementById("tipoUsuario").value.trim();
       const nombre = document.getElementById("nombre").value.trim();
@@ -361,7 +382,6 @@
       const bus = parseInt(document.getElementById("bus").value) || 0;
       const moto = parseInt(document.getElementById("moto").value) || 0;
 
-      // Lectura de los nuevos inputs numéricos
       const aguaInput = document.getElementById("agua").value;
       const gasInput = document.getElementById("gas").value;
       const luzInput = document.getElementById("luz").value;
@@ -380,17 +400,15 @@
       const reciclaje = parseInt(reciclajeRadio.value);
       const carne = parseInt(carneRadio.value);
 
-      // Emisiones de transporte
-      const emisionesCarro = 2.415 * 52;
-      const emisionesBus = 10 * 0.15 * 52;
-      const emisionesMoto = 15 * 0.046 * 52;
+      const emisionesCarro = 2.415 * 4.3;
+      const emisionesBus = 10 * 0.15 * 4.3;
+      const emisionesMoto = 15 * 0.046 * 4.3;
 
-      // Nuevas Emisiones (Factores estándar Colombia x 12 meses para anualizar el mensual)
-      const emisionesAguaCalc = agua * 0.344 * 12; // Aprox 0.344 kg CO2 por m3 de agua procesada
-      const emisionesGasCalc = gas * 2.02 * 12;    // Aprox 2.02 kg CO2 por m3 de gas natural
-      const emisionesLuzCalc = luz * 0.164 * 12;   // Aprox 0.164 kg CO2 por kWh de electricidad en Colombia
+      const emisionesAguaCalc = agua * 0.344;
+      const emisionesGasCalc = gas * 2.02;
+      const emisionesLuzCalc = luz * 0.164;
       
-      const emisionesReciclaje = [0, 150, 300];
+      const emisionesReciclaje = [0, 12.5, 25];
 
       const totalKg =
         carro * emisionesCarro +
@@ -399,20 +417,20 @@
         emisionesAguaCalc +
         emisionesGasCalc +
         emisionesLuzCalc +
-        carne * 900 +
+        carne * 75 +
         emisionesReciclaje[reciclaje];
 
-      const totalToneladas = totalKg / 1000;
-      const media = 1.6;
+      const totalToneladas = totalKg;
+      const media = 133;
 
-      let mensaje = `${nombre}, tu huella de carbono anual es de ${totalToneladas.toFixed(2)} toneladas de CO₂.\n\n`;
+      let mensaje = `${nombre}, tu huella de carbono mensual es de ${totalToneladas.toFixed(2)} Kilogramos de CO₂.\n\n`;
 
       if (totalToneladas < media) {
-        mensaje += "Estás por debajo del promedio de Colombia (1,6 t). Sigue así.";
+        mensaje += "Estás por debajo del promedio de Colombia (133 kg). Sigue así.";
       } else if (totalToneladas > media) {
-        mensaje += "Estás por encima del promedio de Colombia (1,6 t). Intenta reducir tu huella de carbono.";
+        mensaje += "Estás por encima del promedio de Colombia (133 kg). Intenta reducir tu huella de carbono.";
       } else {
-        mensaje += "Estás justo en el promedio de Colombia (1,6 t). Vas por buen camino.";
+        mensaje += "Estás justo en el promedio de Colombia (133 kg). Vas por buen camino.";
       }
 
       const divResultado = document.getElementById("resultado");
@@ -431,7 +449,7 @@
         bus,
         moto,
         reciclaje,
-        luzSeleccionada: luz, // Se envía así para que tu base de datos actual lo reciba igual
+        luzSeleccionada: luz,
         carne,
         agua,
         gas,
