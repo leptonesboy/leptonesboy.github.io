@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Calculadora de huella de carbono COLBOYD</title>
+  <link rel="icon" href="https://leptonesboy.github.io/favicon_leptones.jpeg" type="image/jpeg">
+  <style>
+    body {
+      background-color: #f4f4f4;
+      font-family: 'Comic Sans MS', sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .apartado {
+      background-color: #FFFFFF;
+      max-width: 800px;
+      margin: 0 auto 30px auto;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    h1, h3 { text-align: center; color: #000000; }
+    h4 { font-weight: normal; text-align: left; font-family: Arial, Helvetica, sans-serif; }
+    .pregunta {
+      background-color: #c8e6c9;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+    label { font-size: 18px; margin-bottom: 10px; display: block; }
+    input[type="text"], input[type="number"], select {
+      font-size: 16px;
+      padding: 8px;
+      border-radius: 8px;
+      margin-top: 8px;
+      display: block;
+      width: calc(100% - 16px);
+      box-sizing: border-box;
+    }
+    .opciones.verticales {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      margin-top: 5px;
+    }
+    .opciones.verticales label {
+      font-size: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      margin: 0;
+      padding: 0;
+    }
+    button {
+      margin-top: 30px;
+      padding: 12px;
+      font-size: 18px;
+      width: 100%;
+      background-color: #006400;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover { background-color: #42a5f5; }
+    #resultado {
+      margin-top: 30px;
+      background-color: #c8e6c9;
+      padding: 20px;
+      border-radius: 10px;
+      font-size: 18px;
+      border: 1px solid #388e3c;
+      white-space: pre-wrap;
+    }
+    .acordeon {
+      margin: 20px 0;
+      border: 1px solid #388e3c;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .acordeon-titulo {
+      background-color: #c8e6c9;
+      padding: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+    }
+    .acordeon-contenido {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+      background-color: #f9fff9;
+      padding: 0 12px;
+    }
+    .acordeon-contenido p {
+      margin: 12px 0;
+      font-size: 16px;
+    }
+    .acordeon.activo .acordeon-contenido {
+      max-height: 500px;
+      padding: 12px;
+    }
+    .toast {
+      visibility: hidden;
+      min-width: 250px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 10px;
+      padding: 16px;
+      position: fixed;
+      z-index: 1000;
+      left: 50%;
+      bottom: 30px;
+      transform: translateX(-50%);
+      font-size: 17px;
+      opacity: 0;
+      transition: opacity 0.4s, bottom 0.4s;
+    }
+    .toast.show {
+      visibility: visible;
+      opacity: 1;
+      bottom: 50px;
+    }
+    .toast.success { background-color: #4CAF50; }
+    .toast.error { background-color: #f44336; }
+    
+    .info-version {
+        display: flex;
+        justify-content: space-between;
+        text-align: center;
+        font-size: 12px;
+        color: #333;
+        font-family: Arial, Helvetica, sans-serif;
+        margin-bottom: 15px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .izquierda {text-align: left; width: 33%; font-family: Arial, Helvetica, sans-serif;}
+    .centro {text-align: center; width: 33%; font-family: Arial, Helvetica, sans-serif;}
+    .derecha {text-align: right; width: 33%; font-family: Arial, Helvetica, sans-serif;}
+
+    /* Caja especial para el texto generado por la IA local */
+    #texto-consejos-ia {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      background-color: #f0fdf4;
+      border-left: 5px solid #388e3c;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 20px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="info-version">
+        <div class="izquierda">
+            <strong>Fecha de versión:</strong> 05/06/2026
+        </div>
+        <div class="centro">
+            <strong>Hora de versión:</strong> 10:00 a.m.
+        </div>
+        <div class="derecha">
+            <strong>Número de versión:</strong> v2.1.468.34vfin50
+        </div>
+  </div>
+
+  <div class="apartado" id="seccion-inicio">
+    <h2 style="text-align:center;">Footprint Boy</h2>
+    <video id="videoInicio" controls style="width: 100%; border-radius: 10px; max-width: 600px; display: block; margin: 0 auto;">
+      <source src="https://leptonesboy.github.io/video_inicio.mp4" type="video/mp4">
+      Tu navegador no soporta el video.
+    </video>
+    <p style="font-size: 12px; text-align: center; margin-top: 10px;">Tomado de: <a href="https://www.youtube.com/watch?v=nQ1pPLb1Fc4" target="_blank">https://www.youtube.com/watch?v=nQ1pPLb1Fc4</a></p>
+    
+    <h3 style="margin-top: 30px;">Bienvenidos</h3>
+    <button type="button" onclick="empezarEncuesta()" style="background-color: #32ff7e; color: black; font-weight: bold; width: 200px; display: block; margin: 20px auto 0 auto;">Empezar</button>
+  </div>
+
+  <div class="apartado" id="seccion-encuesta" style="display: none;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 20px;">
+      <div style="flex: 1; display: flex; justify-content: flex-start;">
+        <img src="https://calculadorahuellacarbono.github.io/favicon_CBD.jpg" alt="Logo COLBOYD" style="width: 120px; height: auto;" />
+      </div>
+      <div style="flex: 1; display: flex; justify-content: center; align-items: center; gap: 20px;">
+        <img src="https://calculadorahuellacarbono.github.io/favicon_LB.jpg" alt="Logo Leptones BOY" style="width: 100px; height: auto;" />
+        <img src="https://leptonesboy.github.io/favicon_leptones.jpeg" alt="Logo Leptones" style="width: 130px; height: auto;" />
+      </div>
+      <div style="flex: 1; display: flex; justify-content: flex-end;">
+        <img src="https://calculadorahuellacarbono.github.io/favicon_ME.png" alt="Logo MinEducación" style="width: 170px; height: auto;" />
+      </div>
+    </div>
+
+    <h1>Mi Huella de Carbono COLBOYD</h1>
+    <h3>"Transforma tu huella, transforma el planeta"</h3>
+
+    <div class="acordeon">
+      <div class="acordeon-titulo">¿Sabes qué es la Huella de Carbono?</div>
+      <div class="acordeon-contenido">
+        <p>Las emisiones de CO₂ que produces al año son una de las grandes variables en el aumento del calentamiento global, ya que contribuyen al efecto invernadero y aceleran los cambios en el clima.</p>
+        <p>Podemos disminuir nuestra huella de carbono apagando las luces cuando no las usamos, reciclando, usando bicicleta o transporte público, y consumiendo menos carne.</p>
+      </div>
+    </div>
+
+    <form id="formCalc" onsubmit="return prepararYEnviar();">
+      <div class="pregunta">
+        <label>Nombre completo:</label>
+        <input type="text" id="nombre" />
+      </div>
+
+      <div class="pregunta">
+        <label>¿Eres estudiante o profesional?</label>
+        <select id="tipoUsuario" onchange="cambiarTipo()">
+          <option value="">-Seleccione Uno-</option>
+          <option value="profesional">Profesional</option>
+          <option value="estudiante">Estudiante</option>
+        </select>
+      </div>
+
+      <div class="pregunta" id="divProfesional" style="display:none;">
+        <label>Profesión:</label>
+        <input type="text" id="profesion" placeholder="Ejemplo: Ingeniero, Profesor" />
+        <label></label>
+        <label>Organización (o Ninguna):</label>
+        <input type="text" id="organizacion" placeholder="Ejemplo: Empresa X o Ninguna" />
+      </div>
+
+      <div class="pregunta" id="divEstudiante" style="display:none;">
+        <label>Grado:</label>
+        <input type="text" id="grado" placeholder="Ejemplo: 10" />
+        <label></label>
+        <label>Grupo:</label>
+        <input type="text" id="grupo" placeholder="01" />
+        <label></label>
+        <label>Institución educativa:</label>
+        <input type="text" id="institucion" placeholder="Ejemplo: Colegio XYZ" />
+      </div>
+
+      <div class="pregunta">
+        <label>¿Cuántos días a la semana usas carro?</label>
+        <input type="number" id="carro" min="0" max="7" />
+      </div>
+
+      <div class="pregunta">
+        <label>¿Cuántos días a la semana usas bus?</label>
+        <input type="number" id="bus" min="0" max="7" />
+      </div>
+
+      <div class="pregunta">
+        <label>¿Cuántos días a la semana usas moto?</label>
+        <input type="number" id="moto" min="0" max="7" />
+      </div>
+
+      <div class="pregunta">
+        <label>Consumo mensual de agua (en m³):</label>
+        <input type="number" id="agua" min="0" step="any" placeholder="Ej: 15" />
+      </div>
+
+      <div class="pregunta">
+        <label>Consumo mensual de gas (en m³):</label>
+        <input type="number" id="gas" min="0" step="any" placeholder="Ej: 20" />
+      </div>
+
+      <div class="pregunta">
+        <label>Consumo mensual de energía eléctrica (en kWh):</label>
+        <input type="number" id="luz" min="0" step="any" placeholder="Ej: 120" />
+      </div>
+      <div class="pregunta">
+        <label>¿Reciclas en casa?</label>
+        <div class="opciones verticales">
+          <label><input type="radio" name="reciclaje" value="0"> Siempre</label>
+          <label><input type="radio" name="reciclaje" value="1"> Algunas veces</label>
+          <label><input type="radio" name="reciclaje" value="2"> Nunca</label>
+        </div>
+      </div>
+
+      <div class="pregunta">
+        <label>¿Consumes carne todos los días?</label>
+        <div class="opciones verticales">
+          <label><input type="radio" name="carne" value="2"> Siempre</label>
+          <label><input type="radio" name="carne" value="1"> Algunas veces</label>
+          <label><input type="radio" name="carne" value="0"> Nunca</label>
+        </div>
+      </div>
+
+      <button type="submit">Calcular y enviar</button>
+    </form>
+
+    <div id="resultado" style="display: none;"></div>
+  </div>
+
+  <div class="apartado" id="seccion-consejos" style="display: none;">
+    <h3>Consejos personalizados:</h3>
+    <div id="texto-consejos-ia"></div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    function empezarEncuesta() {
+      const video = document.getElementById("videoInicio");
+      if (video) { video.pause(); }
+
+      document.getElementById("seccion-inicio").style.display = "none"; 
+      document.getElementById("seccion-encuesta").style.display = "block"; 
+      window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    }
+
+    function showToast(msg, success = true) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.className = `toast show ${success ? "success" : "error"}`;
+      setTimeout(() => { toast.className = "toast"; }, 4000);
+    }
+
+    function cambiarTipo() {
+      const tipo = document.getElementById("tipoUsuario").value;
+      document.getElementById("divProfesional").style.display = tipo === "profesional" ? "block" : "none";
+      document.getElementById("divEstudiante").style.display = tipo === "estudiante" ? "block" : "none";
+    }
+
+    function mostrarConsejos(texto) {
+        const contenedor = document.getElementById("texto-consejos-ia");
+
+        const escaparHTML = (texto) =>
+            texto.replace(/[&<>"']/g, (caracter) => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[caracter]);
+
+        let html = escaparHTML(texto);
+
+        html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+
+        html = html.replace(/\n/g, "<br>");
+
+        contenedor.innerHTML = html;
+    }
+
+    function prepararYEnviar() {
+      const tipo = document.getElementById("tipoUsuario").value.trim();
+      const nombre = document.getElementById("nombre").value.trim();
+
+      if (!tipo) { showToast("Selecciona estudiante o profesional", false); return false; }
+      if (!nombre) { showToast("Ingresa tu nombre completo", false); return false; }
+
+      if (tipo === "profesional") {
+        if (!document.getElementById("profesion").value.trim()) {
+          showToast("Ingresa tu profesión", false);
+          return false;
+        }
+        if (!document.getElementById("organizacion").value.trim()) {
+          showToast("Ingresa organización o Ninguna", false);
+          return false;
+        }
+      }
+
+      if (tipo === "estudiante") {
+        if (!document.getElementById("grado").value.trim() || !document.getElementById("grupo").value.trim()) {
+          showToast("Ingresa grado y grupo", false);
+          return false;
+        }
+        if (!document.getElementById("institucion").value.trim()) {
+          showToast("Ingresa la institución educativa", false);
+          return false;
+        }
+      }
+
+      const carro = parseInt(document.getElementById("carro").value) || 0;
+      const bus = parseInt(document.getElementById("bus").value) || 0;
+      const moto = parseInt(document.getElementById("moto").value) || 0;
+
+      const aguaInput = document.getElementById("agua").value;
+      const gasInput = document.getElementById("gas").value;
+      const luzInput = document.getElementById("luz").value;
+
+      const reciclajeRadio = document.querySelector('input[name="reciclaje"]:checked');
+      const carneRadio = document.querySelector('input[name="carne"]:checked');
+
+      if (aguaInput === "" || gasInput === "" || luzInput === "" || !reciclajeRadio || !carneRadio) {
+        showToast("Selecciona y llena todas las opciones", false);
+        return false;
+      }
+
+      const agua = parseFloat(aguaInput) || 0;
+      const gas = parseFloat(gasInput) || 0;
+      const luz = parseFloat(luzInput) || 0;
+      const reciclaje = parseInt(reciclajeRadio.value);
+      const carne = parseInt(carneRadio.value);
+
+      const emisionesCarro = 2.415 * 4.3;
+      const emisionesBus = 10 * 0.15 * 4.3;
+      const emisionesMoto = 15 * 0.046 * 4.3;
+
+      const emisionesAguaCalc = agua * 0.344;
+      const emisionesGasCalc = gas * 2.02;
+      const emisionesLuzCalc = luz * 0.164;
+      
+      const emisionesReciclaje = [0, 12.5, 25];
+
+      const totalKg =
+        carro * emisionesCarro +
+        bus * emisionesBus +
+        moto * emisionesMoto +
+        emisionesAguaCalc +
+        emisionesGasCalc +
+        emisionesLuzCalc +
+        carne * 75 +
+        emisionesReciclaje[reciclaje];
+
+      const totalToneladas = totalKg;
+      const media = 133;
+
+      let mensaje = `${nombre}, tu huella de carbono mensual es de ${totalToneladas.toFixed(2)} Kilogramos de CO₂.\n\n`;
+
+      if (totalToneladas < media) {
+        mensaje += "Estás por debajo del promedio de Colombia (133 kg). Sigue así.";
+      } else if (totalToneladas > media) {
+        mensaje += "Estás por encima del promedio de Colombia (133 kg). Intenta reducir tu huella de carbono.";
+      } else {
+        mensaje += "Estás justo en el promedio de Colombia (133 kg). Vas por buen camino.";
+      }
+
+      const divResultado = document.getElementById("resultado");
+      divResultado.textContent = mensaje;
+      divResultado.style.display = "block";
+
+      const data = {
+        tipoUsuario: tipo,
+        nombre: nombre,
+        profesion: document.getElementById("profesion").value.trim(),
+        organizacion: document.getElementById("organizacion").value.trim(),
+        grado: document.getElementById("grado").value.trim(),
+        grupo: document.getElementById("grupo").value.trim(),
+        institucion: document.getElementById("institucion").value.trim(),
+        carro,
+        bus,
+        moto,
+        reciclaje,
+        luzSeleccionada: luz,
+        carne,
+        agua,
+        gas,
+        resultado: totalToneladas.toFixed(2)
+      };
+
+      const url = "https://script.google.com/macros/s/AKfycbwivUYh3OqfdKLWUuKHBD6YeoIgSBJI07BY8U-XlHk2D997kfEoi8vUOee2zQ2UpKif/exec";
+
+      document.getElementById("seccion-consejos").style.display = "block";
+      document.getElementById("texto-consejos-ia").textContent = "Generando consejo personalizado con IA...";
+
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(resultado => {
+        showToast("¡Datos enviados correctamente!");
+
+        if (resultado.status === "ok") {
+          document.getElementById("texto-consejos-ia").textContent = resultado.consejo;
+        } else {
+          document.getElementById("texto-consejos-ia").textContent = "No fue posible generar el consejo personalizado.";
+        }
+
+        document.getElementById("seccion-consejos").scrollIntoView({ behavior: "smooth" });
+      })
+      .catch(error => {
+        console.error(error);
+        document.getElementById("texto-consejos-ia").textContent = "Error al conectar con la IA.";
+        showToast("Error al enviar los datos", false);
+      });
+
+      return false;
+    }
+    
+    document.querySelectorAll(".acordeon").forEach((acordeon) => {
+      const titulo = acordeon.querySelector(".acordeon-titulo");
+      titulo.addEventListener("click", () => {
+        document.querySelectorAll(".acordeon").forEach((otro) => { if (otro !== acordeon) otro.classList.remove("activo"); });
+        acordeon.classList.toggle("activo");
+      });
+    });
+  </script>
+</body>
+</html>
